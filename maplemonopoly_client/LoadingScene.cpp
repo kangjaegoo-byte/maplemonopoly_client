@@ -178,9 +178,15 @@ unsigned int _stdcall LaodProc(void* Args)
 		wstrconcat(fullPath, const_cast<WCHAR*>(rootAPathList[loadscene]), filename);
 		_wfullpath(loadPath, fullPath, _MAX_PATH);
 
-		if (wcscmp(filename, L"orange_mushroom_idel.spr") == 0)
-			ResourceManager::GetInstance()->Put(ORANGE_MURSHROOM_IDLE_ANIMATION,reinterpret_cast<Animation*>(ResourceManager::GetInstance()->LoadBinaryData(loadPath)));
+		if (wcscmp(filename, L"hony_mushroom_idel.spr") == 0)
+			ResourceManager::GetInstance()->Put(HORNY_MURSHROOM_IDLE_ANIMATION,reinterpret_cast<Animation*>(ResourceManager::GetInstance()->LoadBinaryData(loadPath)));
 	
+		if (wcscmp(filename, L"orange_mushroom_idel.spr") == 0)
+			ResourceManager::GetInstance()->Put(ORANGE_MURSHROOM_IDLE_ANIMATION, reinterpret_cast<Animation*>(ResourceManager::GetInstance()->LoadBinaryData(loadPath)));
+
+		if (wcscmp(filename, L"pig_idel.spr") == 0)
+			ResourceManager::GetInstance()->Put(PIG_IDLE_ANIMATION, reinterpret_cast<Animation*>(ResourceManager::GetInstance()->LoadBinaryData(loadPath)));
+
 		lac->SetLoadFilename(filename);
 		lac->Add(percent);
 		Sleep(50);

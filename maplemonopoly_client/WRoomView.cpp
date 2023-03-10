@@ -34,19 +34,21 @@ void WRoomView::Init()
 	m_uiVector[WROOM_USERPICK1_BTN] = new Button(488, 83, 61, 40, false); 
 	m_uiVector[WROOM_USERPICK2_BTN] = new Button(560, 83, 61, 40, false); 
 	m_uiVector[WROOM_USERPICK3_BTN] = new Button(633, 83, 61, 40, false); 	
-	m_uiVector[WROOM_GAMESTART_BTN] = new Button(512, 495, 185, 47, false); 	//697,542
+	m_uiVector[WROOM_GAMESTART_BTN] = new Button(512, 495, 185, 47, false); 	
 
-	m_uiVector[WROOM_USER1_PICKVIEW] = new UserPickView(29, 116, 87, 87, false, CPick::ORANGE_MURSHROOM); // 116,202
-	m_uiVector[WROOM_USER2_PICKVIEW] = new UserPickView(134, 116, 87, 87, false, CPick::ORANGE_MURSHROOM);
-	m_uiVector[WROOM_USER3_PICKVIEW] = new UserPickView(239, 116, 87, 87, false, CPick::ORANGE_MURSHROOM);
-	m_uiVector[WROOM_USER4_PICKVIEW] = new UserPickView(344, 116, 87, 87, false, CPick::ORANGE_MURSHROOM);
+	const int padding1 = 10;
+	const int padding2 = 20;
+	m_uiVector[WROOM_USER1_PICKVIEW] = new UserPickView(29  + padding1, 116 + padding1, 87 - padding2, 87 - padding2, false, CPick::ORANGE_MURSHROOM); 
+	m_uiVector[WROOM_USER2_PICKVIEW] = new UserPickView(134 + padding1, 116 + padding1, 87 - padding2, 87 - padding2, false, CPick::ORANGE_MURSHROOM);
+	m_uiVector[WROOM_USER3_PICKVIEW] = new UserPickView(239 + padding1, 116 + padding1, 87 - padding2, 87 - padding2, false, CPick::ORANGE_MURSHROOM);
+	m_uiVector[WROOM_USER4_PICKVIEW] = new UserPickView(344 + padding1, 116 + padding1, 87 - padding2, 87 - padding2, false, CPick::ORANGE_MURSHROOM);
 
 }
 
 void WRoomView::Update()
 {
 	const int passTick = 1000;
-	const int animationPassTick = 500;
+	const int animationPassTick = 100;
 
 	int currentTick = ::GetTickCount64();
 	int deltaTick = currentTick - m_lastTick;
@@ -163,8 +165,6 @@ void WRoomView::CharEvent(WPARAM _key)
 void WRoomView::WatingRoomUserList(std::vector<UserDTO>& _data)
 {
 	EnterCriticalSection(&m_wroomLock);
-
-
 	reinterpret_cast<StaticText*>(m_uiVector[WROOM_USERNAME2_STATICTEXT])->SetText(nullptr);
 	reinterpret_cast<StaticText*>(m_uiVector[WROOM_USERNAME3_STATICTEXT])->SetText(nullptr);
 	reinterpret_cast<StaticText*>(m_uiVector[WROOM_USERNAME4_STATICTEXT])->SetText(nullptr);
@@ -172,14 +172,19 @@ void WRoomView::WatingRoomUserList(std::vector<UserDTO>& _data)
 	for (int i = 0; i < 4; i++) 
 	{
 		reinterpret_cast<StaticText*>(m_uiVector[WROOM_USERNAME1_STATICTEXT + i])->SetText(nullptr);
-		reinterpret_cast<UserPickView*>(m_uiVector[WROOM_USER1_PICKVIEW + i])->Hide();
 	}
 
-	for (int i = 0; i < _data.size(); i++)
+	int user;
+	for (user = 0; user < _data.size(); user++)
 	{
-		reinterpret_cast<StaticText*>(m_uiVector[i + 6])->SetText(_data[i].GetUsername(), wcslen(_data[i].GetUsername())*2);
-		reinterpret_cast<UserPickView*>(m_uiVector[i + 12])->Show();
+		reinterpret_cast<UserPickView*>(m_uiVector[user + 12])->Refresh(static_cast<CPick>(_data[user].GetPick()));
+		reinterpret_cast<StaticText*>(m_uiVector[user + 6])->SetText(_data[user].GetUsername(), wcslen(_data[user].GetUsername())*2);
 	}
+
+	for (; user < 4; user++)
+		reinterpret_cast<UserPickView*>(m_uiVector[user + 12])->Refresh(static_cast<CPick>(NOUSER));
+
+
 	LeaveCriticalSection(&m_wroomLock);
 }
 

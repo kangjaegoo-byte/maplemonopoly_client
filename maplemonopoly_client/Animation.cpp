@@ -36,3 +36,8 @@ Sprite* Animation::GetFrameP()
 {
 	return m_clips[m_nowFrame];
 }
+
+Sprite* Animation::GetFrame(int _clip)
+{
+	return m_clips[_clip];
+}

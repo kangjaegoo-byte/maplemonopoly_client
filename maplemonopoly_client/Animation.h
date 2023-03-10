@@ -22,5 +22,9 @@ public:
 	Sprite* GetFrameP();
 	int     GetFrameCount() { return m_clips.size(); }
 	int     GetNowFrame() { return m_nowFrame; }
+
+
+	Sprite* GetFrame(int _clip);
+
 };
 
