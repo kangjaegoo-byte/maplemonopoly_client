@@ -20,7 +20,11 @@ class WRoomView : public View
 		WROOM_USERNAME4_STATICTEXT = 9,
 		WROOM_EXIT_BTN = 10,
 		WROOM_CHATTING_LIST = 11,
-		WROOM_UICOUNT = 12,
+		WROOM_USER1_PICKVIEW = 12,
+		WROOM_USER2_PICKVIEW = 13,
+		WROOM_USER3_PICKVIEW = 14,
+		WROOM_USER4_PICKVIEW = 15,
+		WROOM_UICOUNT = 16,
 	};
 private:
 	std::vector<UIComponent*>		m_uiVector;
@@ -31,6 +35,7 @@ private:
 	ID2D1SolidColorBrush*			m_blackBrush;
 	int								m_lastTick;
 	int								m_sumTick;
+	int								m_animationUpdateTick = 0;
 	CRITICAL_SECTION				m_wroomLock;
 
 public:

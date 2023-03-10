@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ResourceManager.h"
-
+#include "Sprite.h"
+#include "Animation.h"
 
 ResourceManager* ResourceManager::m_instance = nullptr;
 
@@ -42,6 +43,14 @@ Sound* ResourceManager::GetSound(Resourcename _key)
 		return nullptr;
 }
 
+Animation* ResourceManager::GetAnimation(Resourcename _key)
+{
+	if (m_animation.find(_key) != m_animation.end())
+		return m_animation.find(_key)->second;
+	else
+		return nullptr;
+}
+
 void ResourceManager::Put(Resourcename _key, Bitmap* _value)
 {
 	m_resource.insert({ _key, _value });
@@ -52,9 +61,19 @@ void ResourceManager::Put(Resourcename _key, Sound* _value)
 	m_sounds.insert({ _key, _value });
 }
 
+void ResourceManager::Put(Resourcename _key, Animation* _value)
+{
+	m_animation.insert({ _key, _value });
+}
+
 void ResourceManager::Delete(Resourcename _key)
 {
 	delete m_resource.find(_key)->second;
+}
+
+void ResourceManager::DeleteAnimation(Resourcename _key)
+{
+	delete m_animation.find(_key)->second;
 }
 
 void ResourceManager::GetFileList(OUT std::vector<WCHAR*>& _fileList, const WCHAR* _path)
@@ -113,4 +132,51 @@ void ResourceManager::GetFileExp(WCHAR* _path, OUT WCHAR* _exp)
 		index++;
 	}
 	_exp[index] = '\0';
+}
+
+void* ResourceManager::LoadBinaryData(WCHAR* _filePath)
+{
+	void* ret = nullptr;
+	FILE* p_file = NULL;
+	_wfopen_s(&p_file, _filePath, L"rb");
+	
+	if (p_file != NULL)
+	{
+		SpriteBinaryFileHeader* header = new SpriteBinaryFileHeader();
+		fread(header, sizeof(SpriteBinaryFileHeader), 1, p_file);
+
+		if (header)
+		{
+			SpriteBinaryFileData* bStream = new SpriteBinaryFileData[header->spriteCount];
+			fread(bStream, sizeof(SpriteBinaryFileData), header->spriteCount, p_file);
+
+			switch (header->resourceType)
+			{
+			case SPRITE:
+				for (int i = 0; i < header->spriteCount; i++)
+				{
+					bStream[i].rect.right += 1;
+					bStream[i].rect.bottom += 1;
+					ret = new Sprite(bStream[i].rect, bStream[i].pivotPos);
+				}
+				break;
+			case  ANIMATION:
+			{
+				ret = new Animation();
+				for (int i = 0; i < header->spriteCount; i++)
+				{
+					bStream[i].rect.right += 1;
+					bStream[i].rect.bottom += 1;
+					Sprite* sprite = new Sprite(bStream[i].rect, bStream[i].pivotPos);
+					reinterpret_cast<Animation*>(ret)->AddClip(sprite);
+				}
+				break;
+			}
+			}
+			delete[] bStream;
+		}
+		delete header;
+	}
+
+	return ret;
 }

@@ -126,8 +126,19 @@
     <ClCompile Include="RoomDTO.cpp">
       <Filter>contents\dto</Filter>
     </ClCompile>
-    <ClCompile Include="RoomPageList.cpp" />
     <ClCompile Include="StaticText.cpp">
+      <Filter>contents\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomPageList.cpp">
+      <Filter>contents\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="UserPickView.cpp">
       <Filter>contents\ui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -228,8 +239,19 @@
     <ClInclude Include="RoomDTO.h">
       <Filter>contents\dto</Filter>
     </ClInclude>
-    <ClInclude Include="RoomPageList.h" />
     <ClInclude Include="StaticText.h">
+      <Filter>contents\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomPageList.h">
+      <Filter>contents\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="UserPickView.h">
       <Filter>contents\ui</Filter>
     </ClInclude>
   </ItemGroup>

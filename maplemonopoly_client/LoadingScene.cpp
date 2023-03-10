@@ -97,18 +97,23 @@ unsigned int _stdcall LaodProc(void* Args)
 
 	std::vector<WCHAR*> bitmapPathVector;
 	std::vector<WCHAR*> soundPathVector;
+	std::vector<WCHAR*> animationVector;
 
 	const WCHAR* bitmapPathList[] = { L"",L"..\\imgpack\\login\\*",L"..\\imgpack\\lobby\\*" };
 	const WCHAR* soundPathList[] = { L"",L"..\\soundpack\\login\\*",L"..\\soundpack\\lobby\\*" };
+	const WCHAR* animationPathList[] = { L"",L"",L"..\\animation\\*" };
+
 	const WCHAR* rootBPathList[] = { L"",L"..\\imgpack\\login\\", L"..\\imgpack\\lobby\\" };
 	const WCHAR* rootSPathList[] = { L"",L"..\\soundpack\\login\\", L"..\\soundpack\\lobby\\" };
+	const WCHAR* rootAPathList[] = { L"",L"", L"..\\animation\\" };
 
 	Scenetype loadscene = lac->GetLoadSceneType();
 
 	ResourceManager::GetInstance()->GetFileList(bitmapPathVector, bitmapPathList[loadscene]);
 	ResourceManager::GetInstance()->GetFileList(soundPathVector, soundPathList[loadscene]);
+	ResourceManager::GetInstance()->GetFileList(animationVector, animationPathList[loadscene]);
 
-	const int totalDataCount = bitmapPathVector.size() + soundPathVector.size();
+	const int totalDataCount = bitmapPathVector.size() + soundPathVector.size() + animationVector.size();
 
 	int percent = LoadingBarWidht / totalDataCount;
 	Sleep(500);
@@ -160,6 +165,22 @@ unsigned int _stdcall LaodProc(void* Args)
 		if (wcscmp(filename, L"login.wav") == 0)
 			ResourceManager::GetInstance()->Put(LOGIN_BGM, sound);
 
+		lac->SetLoadFilename(filename);
+		lac->Add(percent);
+		Sleep(50);
+	}
+
+	for (int i = 0; i < animationVector.size(); i++)
+	{
+		WCHAR loadPath[1000] = L"";
+		WCHAR fullPath[1000] = L"";
+		WCHAR* filename = animationVector[i];
+		wstrconcat(fullPath, const_cast<WCHAR*>(rootAPathList[loadscene]), filename);
+		_wfullpath(loadPath, fullPath, _MAX_PATH);
+
+		if (wcscmp(filename, L"orange_mushroom_idel.spr") == 0)
+			ResourceManager::GetInstance()->Put(ORANGE_MURSHROOM_IDLE_ANIMATION,reinterpret_cast<Animation*>(ResourceManager::GetInstance()->LoadBinaryData(loadPath)));
+	
 		lac->SetLoadFilename(filename);
 		lac->Add(percent);
 		Sleep(50);

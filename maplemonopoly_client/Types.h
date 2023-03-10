@@ -29,6 +29,9 @@ enum Resourcename : unsigned int
 	ORANGE_MURSHROOM_BITMAP,
 	PIG_BITMAP,
 	HORNY_MURSHROOM_BITMAP,
+	ORANGE_MURSHROOM_IDLE_ANIMATION,
+	HORNY_MURSHROOM_ANIMATION,
+	PIG_IDLE_ANIMATION,
 	LOGIN_BGM,
 	LOGIN_CLICK_SOUND,
 };
@@ -63,6 +66,7 @@ enum ControllerType : int
 	CLIENT_ETNER_WATING_ROOM_REQUEST = 7,
 	CLIENT_WROOM_EXIT_REQUEST = 8,
 	CLIENT_WROOM_CHAT_MSG_SEND_REQUEST = 9,
+	CLIENT_CPICK_REQUEST = 10
 };
 
 /*********************************************************
@@ -85,4 +89,30 @@ enum ServerResponse : int
 enum Roomstatus : int
 {
 	HOLD = 0
+};
+
+struct SpriteBinaryFileHeader
+{
+	char fileName[256];
+	int resourceType;
+	int  spriteCount;
+};
+
+struct SpriteBinaryFileData
+{
+	D2D1_RECT_F		rect;
+	D2D1_POINT_2F	pivotPos;
+};
+
+enum RESOURCE_TYPE : int
+{
+	SPRITE = 0,
+	ANIMATION = 1,
+};
+
+enum CPick : int
+{
+	HONY_MURSHROOM = 0,
+	ORANGE_MURSHROOM = 1,
+	PIG				=2
 };

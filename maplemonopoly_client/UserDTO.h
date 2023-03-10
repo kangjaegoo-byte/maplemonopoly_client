@@ -8,6 +8,7 @@ private:
 	WCHAR    m_username[15] = L"";
 	int		 m_userId = 0;
 	int		 m_sung = 0;
+	int		 m_pick = 0;
 	WORD	 m_roomSq = 0;
 	Location m_location = Location::LOBBY_ROOM;
 public:
@@ -24,5 +25,7 @@ public:
 	void	 SetLocation(Location _location) { m_location = _location; }
 	void	 SetRoomSq(WORD _sq) { m_roomSq = _sq; }
 	int		 GetRoomSq() { return m_roomSq; }
+	void	 SetUserPick(int _pick) { m_pick = _pick; }
+	int		 GetPick() { return m_pick; }
 };
 
