@@ -1,0 +1,116 @@
+#include "pch.h"
+#include "ResourceManager.h"
+
+
+ResourceManager* ResourceManager::m_instance = nullptr;
+
+ResourceManager::~ResourceManager()
+{
+	for (auto it = m_resource.begin(); it != m_resource.end();)
+		if (it->second)
+			delete it->second;
+
+	if (m_instance)
+		delete m_instance;
+}
+
+ResourceManager* ResourceManager::GetInstance()
+{
+	if (m_instance == nullptr)
+		m_instance = new ResourceManager();
+	return m_instance;
+}
+
+void ResourceManager::DeleteResourceManager()
+{
+	delete m_instance;
+}
+
+Bitmap* ResourceManager::GetBitmap(Resourcename _key)
+{
+	if (m_resource.find(_key) != m_resource.end())
+		return m_resource.find(_key)->second;
+	else
+		return nullptr;
+}
+
+Sound* ResourceManager::GetSound(Resourcename _key)
+{
+	if (m_sounds.find(_key) != m_sounds.end())
+		return m_sounds.find(_key)->second;
+	else
+		return nullptr;
+}
+
+void ResourceManager::Put(Resourcename _key, Bitmap* _value)
+{
+	m_resource.insert({ _key, _value });
+}
+
+void ResourceManager::Put(Resourcename _key, Sound* _value)
+{
+	m_sounds.insert({ _key, _value });
+}
+
+void ResourceManager::Delete(Resourcename _key)
+{
+	delete m_resource.find(_key)->second;
+}
+
+void ResourceManager::GetFileList(OUT std::vector<WCHAR*>& _fileList, const WCHAR* _path)
+{
+	WIN32_FIND_DATA data;
+	HANDLE hFind = FindFirstFileW(_path, &data);
+
+	while (FindNextFileW(hFind, &data))
+	{
+		if ((data.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE) &&  //파일이라면
+			!(data.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM)) //시스템파일은 제외
+		{
+			TCHAR* cha = new TCHAR[256];
+
+			for (int i = 0; i <= _tcslen(data.cFileName); i++)
+				cha[i] = data.cFileName[i];
+			_fileList.push_back(cha);
+		}
+	}
+	FindClose(hFind);
+}
+
+void ResourceManager::GetFileName(WCHAR* _path, OUT WCHAR* _fileName)
+{
+	int pathLen = wcslen(_path);
+	for (int i = 0; i < pathLen; i++)
+	{
+		if (_path[i] == L'.')
+		{
+			_fileName[i] = '\0';
+			break;
+		}
+		_fileName[i] = _path[i];
+	}
+}
+
+void ResourceManager::GetFileExp(WCHAR* _path, OUT WCHAR* _exp)
+{
+	std::stack<WCHAR> s;
+	int pathLen = wcslen(_path);
+
+	for (int i = pathLen - 1; i >= 0; i--)
+	{
+		if (_path[i] == _T('.'))
+			break;
+		s.push(_path[i]);
+	}
+
+	int index = 0;
+
+	while (s.empty() == false)
+	{
+		TCHAR t = s.top();
+		s.pop();
+		_exp[index] = t;
+		index++;
+	}
+	_exp[index] = '\0';
+}

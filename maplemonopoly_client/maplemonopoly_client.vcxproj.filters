@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{0c2d2599-20e1-4dc5-8335-e40ed733d517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base">
+      <UniqueIdentifier>{2b0968bb-5c8c-47fb-a9d7-e814c339bd5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contents">
+      <UniqueIdentifier>{fdf422d9-a82b-40cf-8a91-a387a34009c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{e3bcbf4e-1ddf-4217-aa84-0c13da702e99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contents\wnd">
+      <UniqueIdentifier>{d04c43b1-e241-4037-b875-18443ee3ec09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contents\app">
+      <UniqueIdentifier>{f12171a3-df80-40c1-ae45-0f60a211d298}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contents\scene">
+      <UniqueIdentifier>{a0957cb4-ca56-4be4-b5be-94a891c9f98d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contents\ui">
+      <UniqueIdentifier>{7b1b56d5-cdaf-4974-90e9-3a480855b8c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contents\dto">
+      <UniqueIdentifier>{bb34daca-c166-403e-9b41-462cb7f23fdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contents\view">
+      <UniqueIdentifier>{f360d88b-6388-4903-893c-6aab04ab7ef6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="Wnd.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="D2D1Core.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="Bitmap.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWnd.cpp">
+      <Filter>contents\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="MaplemonopolyApp.cpp">
+      <Filter>contents\app</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScene.cpp">
+      <Filter>contents\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="SDKwavefile.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginScene.cpp">
+      <Filter>contents\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="UIComponent.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="InputEditor.cpp">
+      <Filter>contents\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="AlertModal.cpp">
+      <Filter>contents\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>contents\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UserDTO.cpp">
+      <Filter>contents\dto</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>contents\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="View.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyView.cpp">
+      <Filter>contents\view</Filter>
+    </ClCompile>
+    <ClCompile Include="CRoomView.cpp">
+      <Filter>contents\view</Filter>
+    </ClCompile>
+    <ClCompile Include="WRoomView.cpp">
+      <Filter>contents\view</Filter>
+    </ClCompile>
+    <ClCompile Include="ChattingBox.cpp">
+      <Filter>contents\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="PagingList.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="UserPageList.cpp">
+      <Filter>contents\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomDTO.cpp">
+      <Filter>contents\dto</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomPageList.cpp" />
+    <ClCompile Include="StaticText.cpp">
+      <Filter>contents\ui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Wnd.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="D2D1Core.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Bitmap.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWnd.h">
+      <Filter>contents\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="MaplemonopolyApp.h">
+      <Filter>contents\app</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Macro.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="FPSManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>contents\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="SDKwavefile.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginScene.h">
+      <Filter>contents\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="UIComponent.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="InputEditor.h">
+      <Filter>contents\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="AlertModal.h">
+      <Filter>contents\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>contents\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UserDTO.h">
+      <Filter>contents\dto</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyScene.h">
+      <Filter>contents\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="View.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyView.h">
+      <Filter>contents\view</Filter>
+    </ClInclude>
+    <ClInclude Include="CRoomView.h">
+      <Filter>contents\view</Filter>
+    </ClInclude>
+    <ClInclude Include="WRoomView.h">
+      <Filter>contents\view</Filter>
+    </ClInclude>
+    <ClInclude Include="ChattingBox.h">
+      <Filter>contents\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="PagingList.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="UserPageList.h">
+      <Filter>contents\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomDTO.h">
+      <Filter>contents\dto</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomPageList.h" />
+    <ClInclude Include="StaticText.h">
+      <Filter>contents\ui</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
