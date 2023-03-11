@@ -74,7 +74,9 @@ void LoginScene::Clean()
 	m_whiteBrush->Release();
 	ResourceManager::GetInstance()->Delete(LOGIN_ALERTMODAL_BITMAP);
 	ResourceManager::GetInstance()->Delete(LOGIN_BACKGROUND_BITMAP);
-	m_bgm->End();
+	ResourceManager::GetInstance()->DeleteSound(LOGIN_BGM);
+	for (int i = 0; i < LOGIN_UI_COUNT; i++)
+		delete m_uiVector[i];
 }
 
 void LoginScene::MouseMoveEvent(int _x, int _y)

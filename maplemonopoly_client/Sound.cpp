@@ -73,8 +73,10 @@ void Sound::Clean()
 	if (m_datas)
 		delete[] m_datas;
 
+	m_pSourceVoice->DestroyVoice();
 	m_pMasterVoice->DestroyVoice();
 	m_pXAudio2->Release();
+
 	CoUninitialize();
 }
 
@@ -84,7 +86,7 @@ void Sound::Playing(bool _bgm)
 	unsigned int soundThreadId = ThreadId::SOUND;
 	if (_bgm)
 	{
-		_beginthreadex(NULL, 0, &SoundProc, this, 0, &bgmThreadId);
+		_beginthreadex(NULL, 0, &BgmProc, this, 0, &bgmThreadId);
 	}
 	else
 	{
@@ -96,6 +98,7 @@ unsigned int _stdcall SoundProc(void* Args)
 {
 	Sound* sound = reinterpret_cast<Sound*>(Args);
 	sound->Play();
+	delete sound;
 	return 0;
 }
 

@@ -7,6 +7,7 @@
 #include "UserDTO.h"
 #include "MaplemonopolyApp.h"
 #include "RoomDTO.h"
+#include "GameScene.h"
 SceneManager* SceneManager::m_instance = nullptr;
 
 SceneManager* SceneManager::GetInstance()
@@ -124,6 +125,10 @@ void SceneManager::Recv(char* _buffer)
     case CLIENT_WROOM_CHAT_MSG_SEND_RESPONSE:
         WRoomChatMsgRecv(reinterpret_cast<WCHAR*>(dataPtr), dataSize);
         break;
+
+    case CLIENT_GAME_START_RESPONSE:
+        GameEnter(dataPtr, dataSize, dataCnt);
+        break;
     }
 }
 
@@ -166,6 +171,19 @@ void SceneManager::LobbyPage()
     LeaveCriticalSection(&m_sceneDeleteRequireLock);
 }
 
+void SceneManager::GamePage()
+{
+    EnterCriticalSection(&m_sceneDeleteRequireLock);
+    if (m_sceneVector[m_nowscene] != nullptr)
+    {
+        delete m_sceneVector[m_nowscene];
+        m_sceneVector[m_nowscene] = nullptr;
+    }
+    m_nowscene = GAME_SCENE;
+    m_sceneVector[m_nowscene] = new GameScene();
+    LeaveCriticalSection(&m_sceneDeleteRequireLock);
+}
+
 void SceneManager::SceneChange(Scenetype _type)
 {
     switch (_type)
@@ -176,6 +194,10 @@ void SceneManager::SceneChange(Scenetype _type)
     case LOBBY_SCENE:
         LobbyPage();
         break;
+    case GAME_SCENE:
+        GamePage();
+        break;
+
     case SCENE_COUNT:
         break;
     }
@@ -188,7 +210,7 @@ void SceneManager::LobbyChatMsgRecv(WCHAR* _text, int _size)
 
     if (m_sceneVector[m_nowscene])
     {
-        reinterpret_cast<LobbyScene*>(m_sceneVector[m_nowscene])->RecvLobbyChatMsg(_text, _size);
+        static_cast<LobbyScene*>(m_sceneVector[m_nowscene])->RecvLobbyChatMsg(_text, _size);
     }
 }
 
@@ -205,7 +227,7 @@ void SceneManager::LobbyUserListDataAsync(char* _buffer, int _dataCnt)
 
     if (m_sceneVector[m_nowscene])
     {
-        reinterpret_cast<LobbyScene*>(m_sceneVector[m_nowscene])->LobbyUserListDataAsync(_data);
+        static_cast<LobbyScene*>(m_sceneVector[m_nowscene])->LobbyUserListDataAsync(_data);
     }
 }
 
@@ -222,7 +244,7 @@ void SceneManager::LobbyRoomListDataAsync(char* _buffer, int _dataCnt)
 
     if (m_sceneVector[m_nowscene])
     {
-        reinterpret_cast<LobbyScene*>(m_sceneVector[m_nowscene])->LobbyRoomListDataAsync(_data);
+        static_cast<LobbyScene*>(m_sceneVector[m_nowscene])->LobbyRoomListDataAsync(_data);
     }
 }
 
@@ -244,14 +266,14 @@ void SceneManager::WatingRoomUserList(char* _buffer, int _dataCnt)
 
     if (m_sceneVector[m_nowscene])
     {
-        reinterpret_cast<LobbyScene*>(m_sceneVector[m_nowscene])->WatingRoomUserList(_data);
+        static_cast<LobbyScene*>(m_sceneVector[m_nowscene])->WatingRoomUserList(_data);
     }
 
 }
 
 void SceneManager::WatingRoomTitle(WCHAR* _buffer, int _dataCnt)
 {
-    reinterpret_cast<LobbyScene*>(m_sceneVector[m_nowscene])->WatingRoomTitle(_buffer, _dataCnt);
+    static_cast<LobbyScene*>(m_sceneVector[m_nowscene])->WatingRoomTitle(_buffer, _dataCnt);
 }
 
 void SceneManager::WRoomChatMsgRecv(WCHAR* _buffer, int _dataSize)
@@ -261,7 +283,7 @@ void SceneManager::WRoomChatMsgRecv(WCHAR* _buffer, int _dataSize)
 
     if (m_sceneVector[m_nowscene])
     {
-        reinterpret_cast<LobbyScene*>(m_sceneVector[m_nowscene])->WRoomChatMsgRecv(_buffer, _dataSize);
+        static_cast<LobbyScene*>(m_sceneVector[m_nowscene])->WRoomChatMsgRecv(_buffer, _dataSize);
     }
 }
 
@@ -270,7 +292,7 @@ void SceneManager::LobbyViewIndexUp()
     if (m_nowscene != LOBBY_SCENE)
         return;
 
-    reinterpret_cast<LobbyScene*>(m_sceneVector[m_nowscene])->ViewindexUp();
+    static_cast<LobbyScene*>(m_sceneVector[m_nowscene])->ViewindexUp();
 }
 
 void SceneManager::LobbyViewIndexDown()
@@ -278,7 +300,7 @@ void SceneManager::LobbyViewIndexDown()
     if (m_nowscene != LOBBY_SCENE)
         return;
 
-    reinterpret_cast<LobbyScene*>(m_sceneVector[m_nowscene])->ViewindexDown();
+    static_cast<LobbyScene*>(m_sceneVector[m_nowscene])->ViewindexDown();
 }
 
 void SceneManager::MoveViewIndex(int _index)
@@ -286,10 +308,23 @@ void SceneManager::MoveViewIndex(int _index)
     if (m_nowscene != LOBBY_SCENE)
         return;
 
-    reinterpret_cast<LobbyScene*>(m_sceneVector[m_nowscene])->MoveViewIndex(_index);
+    static_cast<LobbyScene*>(m_sceneVector[m_nowscene])->MoveViewIndex(_index);
 }
 
 void SceneManager::WatingRoomBoom()
 {
-    reinterpret_cast<LobbyScene*>(m_sceneVector[m_nowscene])->WatingRoomBoom();
+    static_cast<LobbyScene*>(m_sceneVector[m_nowscene])->WatingRoomBoom();
+}
+
+void SceneManager::GameEnter(char* _dataPtr, int _size, int _cnt)
+{
+    if (m_nowscene != GAME_SCENE)
+        return;
+
+    std::vector<UserDTO> _data;
+    _data.resize(_cnt);
+
+    memcpy(_data.data(), _dataPtr, _cnt * sizeof(UserDTO));
+
+    static_cast<GameScene*>(m_sceneVector[m_nowscene])->GamePlay(_data);
 }

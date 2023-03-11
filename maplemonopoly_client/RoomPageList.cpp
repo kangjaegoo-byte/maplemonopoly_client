@@ -52,6 +52,10 @@ void RoomPageList::Render()
 		case Roomstatus::HOLD:
 			D2D1Core::GetInstance()->GetCRT()->DrawTextW(L"대기", 3, m_textFormat, D2D1::RectF(91.0f, top + heightPlus, 122.0f, bottom + heightPlus), m_blackBrush);
 			break;
+
+		case Roomstatus::GAME:
+			D2D1Core::GetInstance()->GetCRT()->DrawTextW(L"게임", 3, m_textFormat, D2D1::RectF(91.0f, top + heightPlus, 122.0f, bottom + heightPlus), m_redBrush);
+			break;
 		}
 
 		// 제목

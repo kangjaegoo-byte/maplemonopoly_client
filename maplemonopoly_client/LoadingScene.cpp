@@ -67,6 +67,7 @@ void LoadingScene::Clean()
 	m_textFormat->Release();
 	m_blackBrush->Release();
 	m_blueBrush->Release();
+	ResourceManager::GetInstance()->Delete(LOADING_BACKGROUND_BITMAP);
 }
 
 void LoadingScene::MouseMoveEvent(int _x, int _y)
@@ -99,13 +100,13 @@ unsigned int _stdcall LaodProc(void* Args)
 	std::vector<WCHAR*> soundPathVector;
 	std::vector<WCHAR*> animationVector;
 
-	const WCHAR* bitmapPathList[] = { L"",L"..\\imgpack\\login\\*",L"..\\imgpack\\lobby\\*" };
-	const WCHAR* soundPathList[] = { L"",L"..\\soundpack\\login\\*",L"..\\soundpack\\lobby\\*" };
-	const WCHAR* animationPathList[] = { L"",L"",L"..\\animation\\*" };
+	const WCHAR* bitmapPathList[] = { L"",L"..\\imgpack\\login\\*",L"..\\imgpack\\lobby\\*",L"..\\imgpack\\game\\*"};
+	const WCHAR* soundPathList[] = { L"",L"..\\soundpack\\login\\*",L"..\\soundpack\\lobby\\*",L"..\\soundpack\\game\\*"};
+	const WCHAR* animationPathList[] = { L"",L"",L"..\\animation\\lobby\\*",L"..\\animation\\game\\*"};
 
-	const WCHAR* rootBPathList[] = { L"",L"..\\imgpack\\login\\", L"..\\imgpack\\lobby\\" };
-	const WCHAR* rootSPathList[] = { L"",L"..\\soundpack\\login\\", L"..\\soundpack\\lobby\\" };
-	const WCHAR* rootAPathList[] = { L"",L"", L"..\\animation\\" };
+	const WCHAR* rootBPathList[] = { L"",L"..\\imgpack\\login\\", L"..\\imgpack\\lobby\\",L"..\\imgpack\\game\\"};
+	const WCHAR* rootSPathList[] = { L"",L"..\\soundpack\\login\\", L"..\\soundpack\\lobby\\",L"..\\imgpack\\game\\"};
+	const WCHAR* rootAPathList[] = { L"",L"", L"..\\animation\\lobby\\",L"..\\animation\\game\\"};
 
 	Scenetype loadscene = lac->GetLoadSceneType();
 
@@ -114,6 +115,8 @@ unsigned int _stdcall LaodProc(void* Args)
 	ResourceManager::GetInstance()->GetFileList(animationVector, animationPathList[loadscene]);
 
 	const int totalDataCount = bitmapPathVector.size() + soundPathVector.size() + animationVector.size();
+
+	if (totalDataCount == 0) return 0;
 
 	int percent = LoadingBarWidht / totalDataCount;
 	Sleep(500);
@@ -150,6 +153,9 @@ unsigned int _stdcall LaodProc(void* Args)
 
 		if (wcscmp(filename, L"pig.png") == 0)
 			ResourceManager::GetInstance()->Put(PIG_BITMAP, bitmap);
+
+		if (wcscmp(filename, L"game.png") == 0)
+			ResourceManager::GetInstance()->Put(GAME_BACKGROUND_BITMAP, bitmap);
 
 		lac->SetLoadFilename(filename);
 		lac->Add(percent);

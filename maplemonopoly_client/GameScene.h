@@ -1,29 +1,38 @@
 #pragma once
 #include "Scene.h"
+class UserDTO;
 class UIComponent;
-class Sound;
 /**************************************************
-	LoginScene : ∑Œ±◊¿Œ æ¿
+	GameScene : ∞‘¿”æ¿
 **************************************************/
-class LoginScene : public Scene
+class GameScene : public Scene
 {
-	enum : int 
+	enum : int
 	{
-		LOGIN_INPUT = 0,
-		LOGIN_BUTTON = 1,
-		LOGIN_ALERTMODAL = 2,
-		LOGIN_UI_COUNT = 3,
+		GAMEUSER1_NAME = 0,
+		GAMEUSER2_NAME = 1,
+		GAMEUSER3_NAME = 2,
+		GAMEUSER4_NAME = 3,
+
+		GAMEUSER1_USERPICK = 4,
+		GAMEUSER2_USERPICK = 5,
+		GAMEUSER3_USERPICK = 6,
+		GAMEUSER4_USERPICK = 7,
+		GAME_EXIT_BTN = 8,
+		GAME_UI_COUNT = 9
 	};
 private:
 	ID2D1HwndRenderTarget*		m_rt;
 	ID2D1BitmapRenderTarget*	m_crt;
 	IDWriteTextFormat*			m_textFormat;
-	ID2D1SolidColorBrush*		m_whiteBrush;
-	Sound*						m_bgm;
+	ID2D1SolidColorBrush*		m_blackBrush;
+	bool						m_start = false;
+	bool						m_end = false;
 	std::vector<UIComponent*>	m_uiVector;
+
 public:
-	LoginScene();
-	virtual ~LoginScene();
+	GameScene();
+	virtual ~GameScene();
 
 	virtual void	Init()		override;
 	virtual void	Update()	override;
@@ -33,5 +42,7 @@ public:
 	virtual void	MouseMoveEvent(int _x, int _y) override;
 	virtual void	MouseClickEnvet(int _x, int _y) override;
 	virtual void	CharEvent(WPARAM _key) override;
+
+	void			GamePlay(std::vector<UserDTO>& dto);
 };
 

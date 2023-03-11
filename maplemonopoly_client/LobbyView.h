@@ -34,7 +34,7 @@ private:
 
 public:
 	LobbyView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, IDWriteTextFormat* _textFormat, IDWriteTextFormat* _boldTextFormat, ID2D1SolidColorBrush* _black, ID2D1SolidColorBrush* _blue, ID2D1SolidColorBrush* _red);
-	~LobbyView();
+	virtual ~LobbyView();
 
 	virtual void	Init()		override;
 	virtual void	Update()	override;

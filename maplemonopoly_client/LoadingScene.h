@@ -17,7 +17,7 @@ private:
 
 public:
 	LoadingScene(Scenetype _loading);
-	~LoadingScene();
+	virtual ~LoadingScene();
 
 	virtual void	Init()		override;
 	virtual void	Update()	override;

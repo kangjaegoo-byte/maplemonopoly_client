@@ -32,5 +32,6 @@ public:
 	void	GetFileName(WCHAR* _path, OUT WCHAR* _fileName);
 	void	GetFileExp(WCHAR* _path, OUT WCHAR* _exp);
 	void*   LoadBinaryData(WCHAR* _filPath);
+	void	DeleteSound(Resourcename _key);
 };
 

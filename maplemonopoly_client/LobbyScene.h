@@ -30,7 +30,7 @@ private:
 	
 public:
 	LobbyScene();
-	~LobbyScene();
+	virtual ~LobbyScene();
 
 	virtual void	Init()		override;
 	virtual void	Update()	override;

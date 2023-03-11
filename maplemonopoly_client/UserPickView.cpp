@@ -12,7 +12,6 @@ UserPickView::UserPickView(int _x, int _y, int _width, int _height, bool _focuse
 UserPickView::~UserPickView()
 {
 	DeleteCriticalSection(&m_pickViewLock);
-	delete m_ani;
 }
 
 void UserPickView::Init()

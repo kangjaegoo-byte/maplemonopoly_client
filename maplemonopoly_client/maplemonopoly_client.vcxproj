@@ -144,6 +144,7 @@
     <ClCompile Include="CRoomView.cpp" />
     <ClCompile Include="D2D1Core.cpp" />
     <ClCompile Include="FPSManager.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameWnd.cpp" />
     <ClCompile Include="InputEditor.cpp" />
     <ClCompile Include="LoadingScene.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="CRoomView.h" />
     <ClInclude Include="D2D1Core.h" />
     <ClInclude Include="FPSManager.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameWnd.h" />
     <ClInclude Include="InputEditor.h" />
     <ClInclude Include="LoadingScene.h" />

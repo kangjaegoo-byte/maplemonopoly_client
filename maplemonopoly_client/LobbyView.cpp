@@ -53,7 +53,7 @@ void LobbyView::Update()
 		m_sumTick = 0;
 	}
 
-	Button* croomBtn = reinterpret_cast<Button*> (m_uiVector[LobbyView_CROOMBTN]);
+	Button* croomBtn = static_cast<Button*> (m_uiVector[LobbyView_CROOMBTN]);
 	if (croomBtn->GetClicked()) 
 	{
 		SceneManager::GetInstance()->LobbyViewIndexUp();
@@ -104,9 +104,9 @@ void LobbyView::CharEvent(WPARAM _key)
 		{
 			if (zindex == LobbyView_CHATINPUT && _key == 13 /* ENTER */)
 			{
-				WCHAR* text = reinterpret_cast<InputEditor*>(m_uiVector[zindex])->GetText();
+				WCHAR* text = static_cast<InputEditor*>(m_uiVector[zindex])->GetText();
 				Network::GetInstance()->SendPacket((char*)text, CLIENT_LOBBY_CHAT_MSG_SEND_REQUEST, wcslen(text)*sizeof(WCHAR) + PACKET_HEADER_SIZE, 1);
-				reinterpret_cast<InputEditor*>(m_uiVector[zindex])->TextInit();
+				static_cast<InputEditor*>(m_uiVector[zindex])->TextInit();
 			}
 			else
 			{
@@ -118,17 +118,17 @@ void LobbyView::CharEvent(WPARAM _key)
 
 void LobbyView::RecvLobbyChatMsg(WCHAR* _text, int _size)
 {
-	reinterpret_cast<ChattingBox*>(m_uiVector[LobbyView_CHATLIST])->Add((char*)_text, _size);
+	static_cast<ChattingBox*>(m_uiVector[LobbyView_CHATLIST])->Add((char*)_text, _size);
 }
 
 void LobbyView::LobbyUserListDataAsync(const std::vector<UserDTO>& _data)
 {
-	reinterpret_cast<UserPageList*>(m_uiVector[LobbyView_USERLIST])->AsyncData(_data);
+	static_cast<UserPageList*>(m_uiVector[LobbyView_USERLIST])->AsyncData(_data);
 }
 
 void LobbyView::LobbyRoomListDataAsync(const std::vector<RoomDTO>& _data)
 {
-	reinterpret_cast<RoomPageList*>(m_uiVector[LobbyView_ROOMLIST])->AsyncData(_data);
+	static_cast<RoomPageList*>(m_uiVector[LobbyView_ROOMLIST])->AsyncData(_data);
 }
 
 void LobbyView::WatingRoomEnter(int _x, int _y)

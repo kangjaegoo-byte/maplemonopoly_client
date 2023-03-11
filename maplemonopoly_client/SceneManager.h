@@ -24,8 +24,11 @@ public:
 public:
 	void					Recv(char* _buffer);
 	void					LoadingPage(Scenetype _next);
+	
 	void					LoginPage();
 	void					LobbyPage();
+	void					GamePage();
+
 	void					SceneChange(Scenetype _type);
 	void					LobbyChatMsgRecv(WCHAR* _text, int _size);
 	void					LobbyUserListDataAsync(char* _buffer, int _dataCnt);
@@ -39,5 +42,6 @@ public:
 	void					LobbyViewIndexDown();
 	void					MoveViewIndex(int _index);
 	void					WatingRoomBoom();
+	void					GameEnter(char* _dataPtr, int _size, int _cnt);
 };
 

@@ -2,7 +2,8 @@
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "Animation.h"
-
+#include "Bitmap.h"
+#include "Sound.h"
 ResourceManager* ResourceManager::m_instance = nullptr;
 
 ResourceManager::~ResourceManager()
@@ -68,12 +69,16 @@ void ResourceManager::Put(Resourcename _key, Animation* _value)
 
 void ResourceManager::Delete(Resourcename _key)
 {
-	delete m_resource.find(_key)->second;
+	Bitmap* bitmap = m_resource.find(_key)->second;
+	delete bitmap;
+	m_resource.erase(_key);
 }
 
 void ResourceManager::DeleteAnimation(Resourcename _key)
 {
-	delete m_animation.find(_key)->second;
+	Animation* ani = m_animation.find(_key)->second;
+	delete ani;
+	m_animation.erase(_key);
 }
 
 void ResourceManager::GetFileList(OUT std::vector<WCHAR*>& _fileList, const WCHAR* _path)
@@ -179,4 +184,11 @@ void* ResourceManager::LoadBinaryData(WCHAR* _filePath)
 	}
 
 	return ret;
+}
+
+void ResourceManager::DeleteSound(Resourcename _key)
+{
+	Sound* sound = m_sounds.find(_key)->second;
+	sound->End();
+	m_sounds.erase(_key);
 }

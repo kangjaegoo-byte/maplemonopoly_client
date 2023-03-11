@@ -55,6 +55,15 @@ void LobbyScene::Clean()
 	ResourceManager::GetInstance()->Delete(LOBBY_CREATEROOMMODAL_BITMAP);
 	ResourceManager::GetInstance()->Delete(WATING_ROOM_BACKGROUND_BITMAP);
 
+	ResourceManager::GetInstance()->Delete(ORANGE_MURSHROOM_BITMAP);
+	ResourceManager::GetInstance()->Delete(HORNY_MURSHROOM_BITMAP);
+	ResourceManager::GetInstance()->Delete(PIG_BITMAP);
+
+
+	ResourceManager::GetInstance()->DeleteAnimation(HORNY_MURSHROOM_IDLE_ANIMATION);
+	ResourceManager::GetInstance()->DeleteAnimation(PIG_IDLE_ANIMATION);
+	ResourceManager::GetInstance()->DeleteAnimation(ORANGE_MURSHROOM_IDLE_ANIMATION);
+
 	for (int i = 0; i < VIEW_COUNT; i++)
 		if (m_viewVector[i])
 			delete m_viewVector[i];

@@ -16,7 +16,7 @@ public:
 
 	Bitmap(ID2D1Bitmap* _bitmap) : m_bitmap(_bitmap) {};
 	Bitmap(ID2D1Bitmap* _bitmap, BYTE* _memory, int _width, int _height, int _bitCount) : m_bitmap(_bitmap), m_memory(_memory), m_width(_width), m_height(_height), m_bitCount(_bitCount) {};
-	~Bitmap() {  };
+	~Bitmap();
 
 	TCHAR*		 GetFileName() { return m_fileName; }
 	void		 SetFileName(const PCWSTR _fileName);

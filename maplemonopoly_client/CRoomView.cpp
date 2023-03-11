@@ -25,9 +25,9 @@ void CRoomView::Init()
 
 void CRoomView::Update()
 {
-	Button* noBtn = reinterpret_cast<Button*> (m_uiVector[CROOM_NOBTN]);
-	Button* okBtn = reinterpret_cast<Button*> (m_uiVector[CROOM_OKBTN]);
-	InputEditor* title = reinterpret_cast<InputEditor*> (m_uiVector[CROOM_TITLEINPUT]);
+	Button* noBtn = static_cast<Button*> (m_uiVector[CROOM_NOBTN]);
+	Button* okBtn = static_cast<Button*> (m_uiVector[CROOM_OKBTN]);
+	InputEditor* title = static_cast<InputEditor*> (m_uiVector[CROOM_TITLEINPUT]);
 	if (noBtn->GetClicked())
 	{
 		SceneManager::GetInstance()->LobbyViewIndexDown();

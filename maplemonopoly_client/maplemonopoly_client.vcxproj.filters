@@ -141,6 +141,9 @@
     <ClCompile Include="UserPickView.cpp">
       <Filter>contents\ui</Filter>
     </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>contents\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -253,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="UserPickView.h">
       <Filter>contents\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>contents\scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

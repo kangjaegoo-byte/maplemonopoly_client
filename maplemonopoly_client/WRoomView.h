@@ -40,7 +40,7 @@ private:
 
 public:
 	WRoomView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, IDWriteTextFormat* _textFormat, IDWriteTextFormat* _staticTextFormat, ID2D1SolidColorBrush* _brush);
-	~WRoomView();
+	virtual ~WRoomView();
 
 	virtual void	Init()		override;
 	virtual void	Update()	override;

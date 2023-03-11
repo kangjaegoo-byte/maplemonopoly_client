@@ -74,11 +74,11 @@ void WRoomView::Update()
 		}
 	}
 
-	Button* exitBtn = reinterpret_cast<Button*> (m_uiVector[WROOM_EXIT_BTN]);
-	Button* honyPick = reinterpret_cast<Button*> (m_uiVector[WROOM_USERPICK1_BTN]);
-	Button* orangePick = reinterpret_cast<Button*> (m_uiVector[WROOM_USERPICK2_BTN]);
-	Button* pigPick = reinterpret_cast<Button*> (m_uiVector[WROOM_USERPICK3_BTN]);
-	Button* gameStart = reinterpret_cast<Button*> (m_uiVector[WROOM_GAMESTART_BTN]);
+	Button* exitBtn = static_cast<Button*> (m_uiVector[WROOM_EXIT_BTN]);
+	Button* honyPick = static_cast<Button*> (m_uiVector[WROOM_USERPICK1_BTN]);
+	Button* orangePick = static_cast<Button*> (m_uiVector[WROOM_USERPICK2_BTN]);
+	Button* pigPick = static_cast<Button*> (m_uiVector[WROOM_USERPICK3_BTN]);
+	Button* gameStart = static_cast<Button*> (m_uiVector[WROOM_GAMESTART_BTN]);
 
 	if (exitBtn->GetClicked())
 	{
@@ -86,7 +86,7 @@ void WRoomView::Update()
 		// 방 나가기
 		Network::GetInstance()->SendPacket((char*)& roomSq, CLIENT_WROOM_EXIT_REQUEST, PACKET_HEADER_SIZE + sizeof(int), 0);
 		SceneManager::GetInstance()->MoveViewIndex(0); // Lobby 이동
-		reinterpret_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->ClearChat();
+		static_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->ClearChat();
 	}
 	else if (honyPick->GetClicked())
 	{
@@ -105,7 +105,7 @@ void WRoomView::Update()
 	}
 	else if (gameStart->GetClicked())
 	{
-
+		Network::GetInstance()->SendPacket(nullptr,CLIENT_GAME_START_REQUEST, PACKET_HEADER_SIZE, 0);
 	}
 }
 
@@ -150,9 +150,9 @@ void WRoomView::CharEvent(WPARAM _key)
 		{
 			if (zindex == WROOM_CHATINPUT && _key == 13 /* ENTER */)
 			{
-				WCHAR* text = reinterpret_cast<InputEditor*>(m_uiVector[zindex])->GetText();
+				WCHAR* text = static_cast<InputEditor*>(m_uiVector[zindex])->GetText();
 				Network::GetInstance()->SendPacket((char*)text, CLIENT_WROOM_CHAT_MSG_SEND_REQUEST, wcslen(text) * sizeof(WCHAR) + PACKET_HEADER_SIZE, 1);
-				reinterpret_cast<InputEditor*>(m_uiVector[zindex])->TextInit();
+				static_cast<InputEditor*>(m_uiVector[zindex])->TextInit();
 			}
 			else
 			{
@@ -165,24 +165,24 @@ void WRoomView::CharEvent(WPARAM _key)
 void WRoomView::WatingRoomUserList(std::vector<UserDTO>& _data)
 {
 	EnterCriticalSection(&m_wroomLock);
-	reinterpret_cast<StaticText*>(m_uiVector[WROOM_USERNAME2_STATICTEXT])->SetText(nullptr);
-	reinterpret_cast<StaticText*>(m_uiVector[WROOM_USERNAME3_STATICTEXT])->SetText(nullptr);
-	reinterpret_cast<StaticText*>(m_uiVector[WROOM_USERNAME4_STATICTEXT])->SetText(nullptr);
+	static_cast<StaticText*>(m_uiVector[WROOM_USERNAME2_STATICTEXT])->SetText(nullptr);
+	static_cast<StaticText*>(m_uiVector[WROOM_USERNAME3_STATICTEXT])->SetText(nullptr);
+	static_cast<StaticText*>(m_uiVector[WROOM_USERNAME4_STATICTEXT])->SetText(nullptr);
 
 	for (int i = 0; i < 4; i++) 
 	{
-		reinterpret_cast<StaticText*>(m_uiVector[WROOM_USERNAME1_STATICTEXT + i])->SetText(nullptr);
+		static_cast<StaticText*>(m_uiVector[WROOM_USERNAME1_STATICTEXT + i])->SetText(nullptr);
 	}
 
 	int user;
 	for (user = 0; user < _data.size(); user++)
 	{
-		reinterpret_cast<UserPickView*>(m_uiVector[user + 12])->Refresh(static_cast<CPick>(_data[user].GetPick()));
-		reinterpret_cast<StaticText*>(m_uiVector[user + 6])->SetText(_data[user].GetUsername(), wcslen(_data[user].GetUsername())*2);
+		static_cast<UserPickView*>(m_uiVector[user + 12])->Refresh(static_cast<CPick>(_data[user].GetPick()));
+		static_cast<StaticText*>(m_uiVector[user + 6])->SetText(_data[user].GetUsername(), wcslen(_data[user].GetUsername())*2);
 	}
 
 	for (; user < 4; user++)
-		reinterpret_cast<UserPickView*>(m_uiVector[user + 12])->Refresh(static_cast<CPick>(NOUSER));
+		static_cast<UserPickView*>(m_uiVector[user + 12])->Refresh(static_cast<CPick>(NOUSER));
 
 
 	LeaveCriticalSection(&m_wroomLock);
@@ -191,7 +191,7 @@ void WRoomView::WatingRoomUserList(std::vector<UserDTO>& _data)
 void WRoomView::WatingRoomTitle(WCHAR* _buffer, int _dataCnt)
 {
 	EnterCriticalSection(&m_wroomLock);
-	reinterpret_cast<StaticText*>(m_uiVector[WROOM_TITLE_STATICTEXT])->SetText(_buffer, _dataCnt);
+	static_cast<StaticText*>(m_uiVector[WROOM_TITLE_STATICTEXT])->SetText(_buffer, _dataCnt);
 	LeaveCriticalSection(&m_wroomLock);
 }
 
@@ -199,10 +199,10 @@ void WRoomView::WatingRoomBoom()
 {
 	MaplemonopolyApp::GetInstance()->GetUserInfo()->SetRoomSq(0);
 	SceneManager::GetInstance()->MoveViewIndex(0); // Lobby 이동
-	reinterpret_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->ClearChat();
+	static_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->ClearChat();
 }
 
 void WRoomView::WRoomChatMsgRecv(WCHAR* _buffer, int _dataSize)
 {
-	reinterpret_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->Add((char*)_buffer, _dataSize);
+	static_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->Add((char*)_buffer, _dataSize);
 }
