@@ -129,6 +129,10 @@ void SceneManager::Recv(char* _buffer)
     case CLIENT_GAME_START_RESPONSE:
         GameEnter(dataPtr, dataSize, dataCnt);
         break;
+
+    case CLIENT_GAME_EXIT_RESPONSE:
+        GameUserExitResponse(dataPtr, dataSize, dataCnt);
+        break;
     }
 }
 
@@ -327,4 +331,17 @@ void SceneManager::GameEnter(char* _dataPtr, int _size, int _cnt)
     memcpy(_data.data(), _dataPtr, _cnt * sizeof(UserDTO));
 
     static_cast<GameScene*>(m_sceneVector[m_nowscene])->GamePlay(_data);
+}
+
+void SceneManager::GameUserExitResponse(char* _dataPtr, int _size, int _cnt)
+{
+    if (m_nowscene != GAME_SCENE)
+        return;
+
+    std::vector<UserDTO> _data;
+    _data.resize(_cnt);
+
+    memcpy(_data.data(), _dataPtr, _cnt * sizeof(UserDTO));
+
+    static_cast<GameScene*>(m_sceneVector[m_nowscene])->GameExit(_data);
 }

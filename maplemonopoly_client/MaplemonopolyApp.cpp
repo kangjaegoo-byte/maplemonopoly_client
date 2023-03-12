@@ -192,6 +192,7 @@ void MaplemonopolyApp::Render()
 	if (bitmap)
 		D2D1Core::GetInstance()->GetRT()->DrawBitmap(bitmap, rt_dest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
 	D2D1Core::GetInstance()->GetRT()->EndDraw();
+	bitmap->Release();
 }
 
 void MaplemonopolyApp::MouseCursorRender()

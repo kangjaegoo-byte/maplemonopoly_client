@@ -86,6 +86,12 @@ void GameScene::MouseMoveEvent(int _x, int _y)
 
 void GameScene::MouseClickEnvet(int _x, int _y)
 {
+	for (int zindex = 0; zindex < GAME_UI_COUNT; zindex++)
+	{
+		auto uiItem = m_uiVector[zindex];
+		if (uiItem)
+			uiItem->ISFocus(_x, _y);
+	}
 }
 
 void GameScene::CharEvent(WPARAM _key)
@@ -97,6 +103,22 @@ void GameScene::GamePlay(std::vector<UserDTO>& dto)
 	m_start = true;
 
 	for (int user = 0; user < dto.size(); user++) 
+	{
+		static_cast<StaticText*>(m_uiVector[GAMEUSER1_NAME + user])->SetText(dto[user].GetUsername(), wcslen(dto[user].GetUsername()) * 2);
+		static_cast<UserPickView*>(m_uiVector[GAMEUSER1_USERPICK + user])->Refresh(static_cast<CPick>(dto[user].GetPick()));
+	}
+}
+
+void GameScene::GameExit(std::vector<UserDTO>& dto)
+{
+
+	for (int i = 0; i < 4; i++) 
+	{
+		static_cast<StaticText*>(m_uiVector[GAMEUSER1_NAME + i])->SetText(nullptr);
+		static_cast<UserPickView*>(m_uiVector[GAMEUSER1_USERPICK + i])->Refresh(static_cast<CPick>(CPick::NOUSER));
+	}
+
+	for (int user = 0; user < dto.size(); user++)
 	{
 		static_cast<StaticText*>(m_uiVector[GAMEUSER1_NAME + user])->SetText(dto[user].GetUsername(), wcslen(dto[user].GetUsername()) * 2);
 		static_cast<UserPickView*>(m_uiVector[GAMEUSER1_USERPICK + user])->Refresh(static_cast<CPick>(dto[user].GetPick()));

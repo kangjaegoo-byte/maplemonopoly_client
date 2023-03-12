@@ -3,6 +3,7 @@
 
 Bitmap::~Bitmap()
 {
+	// m_bitmap->Release();
 	m_bitmap->Release();
 	delete[] m_memory;
 }

@@ -44,5 +44,6 @@ public:
 	virtual void	CharEvent(WPARAM _key) override;
 
 	void			GamePlay(std::vector<UserDTO>& dto);
+	void			GameExit(std::vector<UserDTO>& dto);
 };
 
