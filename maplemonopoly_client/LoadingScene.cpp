@@ -157,6 +157,9 @@ unsigned int _stdcall LaodProc(void* Args)
 		if (wcscmp(filename, L"game.png") == 0)
 			ResourceManager::GetInstance()->Put(GAME_BACKGROUND_BITMAP, bitmap);
 
+		if (wcscmp(filename, L"board.png") == 0)
+			ResourceManager::GetInstance()->Put(GAME_BOARD_BITMAP, bitmap);
+
 		lac->SetLoadFilename(filename);
 		lac->Add(percent);
 		Sleep(50);

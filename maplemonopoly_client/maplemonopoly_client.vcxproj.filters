@@ -144,6 +144,7 @@
     <ClCompile Include="GameScene.cpp">
       <Filter>contents\scene</Filter>
     </ClCompile>
+    <ClCompile Include="GameUserInfoUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -260,5 +261,6 @@
     <ClInclude Include="GameScene.h">
       <Filter>contents\scene</Filter>
     </ClInclude>
+    <ClInclude Include="GameUserInfoUI.h" />
   </ItemGroup>
 </Project>

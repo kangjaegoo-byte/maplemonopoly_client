@@ -43,6 +43,6 @@ public:
 	void					MoveViewIndex(int _index);
 	void					WatingRoomBoom();
 	void					GameEnter(char* _dataPtr, int _size, int _cnt);
-	void					GameUserExitResponse(char* _dataPtr, int _size, int _cnt);
+	void					GameUserExitResponse(int _exitUserIndex);
 };
 

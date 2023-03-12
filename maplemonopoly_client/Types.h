@@ -36,6 +36,7 @@ enum Resourcename : unsigned int
 	LOGIN_BGM,
 	LOGIN_CLICK_SOUND,
 	GAME_BACKGROUND_BITMAP,
+	GAME_BOARD_BITMAP,
 };
 
 enum Location : unsigned int
