@@ -1,0 +1,345 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{f3dc6738-0cd2-4ea6-a450-fdbd47bcdc58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base">
+      <UniqueIdentifier>{e191076c-7456-4a33-9335-35711940016b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{19bca53a-0e7b-4dd7-a11e-2507d876f73b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\app">
+      <UniqueIdentifier>{12c08b17-ba42-48c3-b461-ab336b504d10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\wnd">
+      <UniqueIdentifier>{400a7790-767d-483c-a390-3857adf58411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base\manager">
+      <UniqueIdentifier>{dfb4a7fe-42f2-46e0-8b11-008f28ceb9ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\scene">
+      <UniqueIdentifier>{cc9b04e6-c1da-4fd0-8f3e-3a6edd6989e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base\ui">
+      <UniqueIdentifier>{4342da12-d655-4f6f-bbdc-91916ce33d5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\service">
+      <UniqueIdentifier>{44ba334d-6d6c-4e0f-9017-1c94f1b87deb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\view">
+      <UniqueIdentifier>{f22d9ae9-2488-4571-b90a-a92b12d8093b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\data">
+      <UniqueIdentifier>{ff54bc89-5080-4653-b715-87c6fdb75989}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="MaplemonopolyApp.cpp">
+      <Filter>src\app</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="Wnd.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWnd.cpp">
+      <Filter>src\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="D2D1Core.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="Bitmap.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="FPS.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>base\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>base\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="SDKwavefile.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScene.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginScene.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="InputEditor.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="AlertModal.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UIComponent.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="GameService.cpp">
+      <Filter>src\service</Filter>
+    </ClCompile>
+    <ClCompile Include="View.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyView.cpp">
+      <Filter>src\view</Filter>
+    </ClCompile>
+    <ClCompile Include="User.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="ChattingBox.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UserPageList.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomPageList.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="PagingList.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="CRoomView.cpp">
+      <Filter>src\view</Filter>
+    </ClCompile>
+    <ClCompile Include="WRoomView.cpp">
+      <Filter>src\view</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticText.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UserPickView.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Ready.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="GameView.cpp">
+      <Filter>src\view</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInfo.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInfo2.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInfo3.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInfo4.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="DiceBtn.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientMap.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="Dice.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="DiceNumber.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="MaplemonopolyApp.h">
+      <Filter>src\app</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="Wnd.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWnd.h">
+      <Filter>src\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="coreMacro.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="D2D1Core.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Bitmap.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="FPS.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>base\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>base\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="SDKwavefile.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyScene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginScene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="InputEditor.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="AlertModal.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UIComponent.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="GameService.h">
+      <Filter>src\service</Filter>
+    </ClInclude>
+    <ClInclude Include="View.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyView.h">
+      <Filter>src\view</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="ChattingBox.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UserPageList.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomPageList.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="PagingList.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="CRoomView.h">
+      <Filter>src\view</Filter>
+    </ClInclude>
+    <ClInclude Include="WRoomView.h">
+      <Filter>src\view</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticText.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UserPickView.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Ready.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="GameView.h">
+      <Filter>src\view</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInfo.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInfo2.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInfo3.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInfo4.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="DiceBtn.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientMap.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="Dice.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="DiceNumber.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
