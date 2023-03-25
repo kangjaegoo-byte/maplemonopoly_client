@@ -118,6 +118,34 @@ void GameService::Recv(char* _buffer)
 	case PROCESS_GAME_DICE_RESPONSE:
 		DiceDropResult(reinterpret_cast<DiceData*>(dataPtr));
 		break;
+	
+	case PROCESS_GAME_MOVE_RESPONSE:
+		PlayerMove(dataPtr);
+		break;
+
+	case PROCESS_GAME_BUY_REGION_MODAL_RESPONSE:
+		GameBuyRegion(reinterpret_cast<Region*>(dataPtr));
+		break;
+		// 지역구매 
+	case PROCESS_GAME_BUY_REGION_MODAL_PROCESS_RESPONSE:
+		GameBuyRegionModalProcessResponse(dataPtr);
+		break;
+
+		// 다른사람 지역 구매
+	case PROCESS_GAME_BUY_REGION_OTHER_REGION_RESPONSE:
+		GameOtherBuyResponse(dataPtr);
+		break;
+
+		// 통행료
+	case PROCESS_GAME_MONEY_PASS_RESPONSE:
+		MoneyPassCost(dataPtr);
+		break;
+
+		// 다른사람 지역 살건지 모달 
+	case PROCESS_GAME_BUY_REGION_OTHER_MODAL_RESPONSE:
+		GameBuyRegionModalOtherProcessResponseEx(dataPtr);
+		break;
+
 	}
 
 }
@@ -245,4 +273,34 @@ void GameService::TurnSend(int _playerIdx)
 void GameService::DiceDropResult(DiceData* _diceData)
 {
 	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->DiceDropResult(_diceData);
+}
+
+void GameService::PlayerMove(char* _data)
+{
+	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->PlayerMove(_data);
+}
+
+void GameService::GameBuyRegion(Region* dataPtr)
+{
+	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->GameBuyRegion(dataPtr);
+}
+
+void GameService::GameBuyRegionModalProcessResponse(char* _dataPtr)
+{
+	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->GameBuyRegionModalProcessResponse(_dataPtr);
+}
+
+void GameService::MoneyPassCost(char* _dataPtr)
+{
+	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->MoneyPassCost(_dataPtr);
+}
+
+void GameService::GameBuyRegionModalOtherProcessResponseEx(char* _dataPtr)
+{
+	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->GameBuyRegionModalOtherProcessResponseEx(_dataPtr);
+}
+
+void GameService::GameOtherBuyResponse(char* _dataPtr)
+{
+	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->GameOtherBuyResponse(_dataPtr);
 }

@@ -1,14 +1,19 @@
 #pragma once
+
 class SceneManager
 {
 private:
 	static SceneManager* m_instnace;
-	std::vector<class Scene*> m_scenes;
-	SceneType m_nowScene = LOADING_SCENE;
-	int m_lastTick = 0;
 public:
 	static SceneManager* GetInstance();
 	static void DeleteInstance();
+
+private:
+	std::vector<class Scene*> m_scenes;
+	SceneType m_nowScene = LOADING_SCENE;
+	int m_lastTick = 0;
+
+public:
 	SceneType GetNowScene();
 	void MoveScene(SceneType _type);
 	SceneChangeData Change();

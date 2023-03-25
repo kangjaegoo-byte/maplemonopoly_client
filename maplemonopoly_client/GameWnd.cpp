@@ -29,8 +29,6 @@ void GameWnd::Render()
 	ID2D1Bitmap* bitmap = nullptr;
 	D2D1Core::GetInstance()->GetCRT()->BeginDraw();
 
-
-
 	SceneManager::GetInstance()->Render();
 	D2D1Core::GetInstance()->GetCRT()->DrawBitmap(m_mousecursor->GetBitmap(), D2D1::RectF(m_mx, m_my, m_mx + 32, m_my + 32));
 	DebugRender();

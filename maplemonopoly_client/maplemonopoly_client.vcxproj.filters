@@ -186,6 +186,18 @@
     <ClCompile Include="DiceNumber.cpp">
       <Filter>src\data</Filter>
     </ClCompile>
+    <ClCompile Include="AlertText.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="GameModalView.cpp">
+      <Filter>src\view</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="Money.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -339,6 +351,18 @@
       <Filter>src\data</Filter>
     </ClInclude>
     <ClInclude Include="DiceNumber.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="AlertText.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="GameModalView.h">
+      <Filter>src\view</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="Money.h">
       <Filter>src\data</Filter>
     </ClInclude>
   </ItemGroup>

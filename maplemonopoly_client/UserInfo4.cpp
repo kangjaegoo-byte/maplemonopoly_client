@@ -56,7 +56,7 @@ void UserInfo4::Render()
         break;
     }
 
-    D2D1Core::GetInstance()->GetCRT()->DrawBitmap(bitmap->GetBitmap(), D2D1_RECT_F{ (FLOAT)m_x, (FLOAT)m_y, (FLOAT)m_width + m_x, (FLOAT)m_height + m_y }, m_opacity ? 0.0f : 1.0f);
+    D2D1Core::GetInstance()->GetCRT()->DrawBitmap(bitmap->GetBitmap(), D2D1_RECT_F{ (FLOAT)m_x, (FLOAT)m_y, (FLOAT)m_width + m_x, (FLOAT)m_height + m_y }, m_opacity ? 0.5f : 1.0f);
     m_opacity ? m_pickView->ORender() : m_pickView->Render();
     m_usernameText->Render();
     m_moneyText->Render();

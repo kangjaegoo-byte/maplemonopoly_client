@@ -40,5 +40,14 @@ public:
 	void GameUserAsync(std::vector<class User>& _data);
 	void TurnSend(int _playerIdx);
 	void DiceDropResult(DiceData* _diceData);
+	void PlayerMove(char* _data);
+	void GameBuyRegion(Region* dataPtr);
+
+
+	void					GameBuyRegionModalProcessResponse(char* _dataPtr);
+	void					MoneyPassCost(char* _dataPtr);
+	void					GameBuyRegionModalOtherProcessResponseEx(char* _dataPtr);
+	void					GameOtherBuyResponse(char* _dataPtr);
+
 };
 

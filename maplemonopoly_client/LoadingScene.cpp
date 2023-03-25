@@ -224,6 +224,8 @@ unsigned int _stdcall LaodProc(void* Args)
 		if (wcscmp(filename, L"diceBtn.png") == 0)
 			ResourceManager::GetInstance()->Put(GAME_DICE_BTN_BITMAP, bitmap);
 
+		if (wcscmp(filename, L"alertText.png") == 0)
+			ResourceManager::GetInstance()->Put(GAME_ALERT_TEXT_BITMAP, bitmap);
 
 
 		lac->SetLoadFilename(filename);
@@ -283,7 +285,7 @@ unsigned int _stdcall LaodProc(void* Args)
 			ResourceManager::GetInstance()->Put(MYTURN_SOUND, sound);
 
 		lac->SetLoadFilename(filename);
-		lac->Add(percent);
+		lac->Add(percent);	
 		Sleep(50);
 	}
 

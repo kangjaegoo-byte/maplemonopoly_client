@@ -73,6 +73,9 @@ void UserPickView::ORender()
 		LeaveCriticalSection(&m_pickViewLock);
 		return;
 	}
+
+	Init();
+
 	m_ani->GetFrame(m_clip)->Render(D2D1::RectF(m_x, m_y, m_x + m_width, m_y + m_height), m_bitmap, 0.2f);
 	LeaveCriticalSection(&m_pickViewLock);
 }

@@ -24,6 +24,7 @@ public:
 	virtual void Init() override;
 	virtual void Render() override;
 	virtual void Update(int _tick) override;
+	void Update(int _tick, int _playerIndex);
 	virtual void Clean() override;
 	void		 Move(const Region& region);
 	void		 SetMoney(int _money);

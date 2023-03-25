@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AlertModal.cpp" />
+    <ClCompile Include="AlertText.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Bitmap.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="DiceBtn.cpp" />
     <ClCompile Include="DiceNumber.cpp" />
     <ClCompile Include="FPS.cpp" />
+    <ClCompile Include="GameModalView.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameService.cpp" />
@@ -159,7 +161,9 @@
     <ClCompile Include="LobbyView.cpp" />
     <ClCompile Include="LoginScene.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="MaplemonopolyApp.cpp" />
+    <ClCompile Include="Money.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="PagingList.cpp" />
     <ClCompile Include="pch.cpp">
@@ -193,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlertModal.h" />
+    <ClInclude Include="AlertText.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="Bitmap.h" />
@@ -206,6 +211,7 @@
     <ClInclude Include="DiceBtn.h" />
     <ClInclude Include="DiceNumber.h" />
     <ClInclude Include="FPS.h" />
+    <ClInclude Include="GameModalView.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameService.h" />
@@ -216,7 +222,9 @@
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LobbyView.h" />
     <ClInclude Include="LoginScene.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="MaplemonopolyApp.h" />
+    <ClInclude Include="Money.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="PagingList.h" />
     <ClInclude Include="pch.h" />

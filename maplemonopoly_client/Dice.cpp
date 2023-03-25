@@ -193,7 +193,7 @@ void Dice::Hold(int _playerIndex)
 	};
 
 	Pos startPos1 [4] = { {137,129},{686,120},{94, 513},{678,511} };
-	Pos startPos2 [4] = { {163,125},{720,161},{148, 544},{586,560} };
+	Pos startPos2 [4] = { {79,153},{720,161},{148, 544},{586,560} };
 
 
 	m_dice1X = startPos1[_playerIndex]._x;

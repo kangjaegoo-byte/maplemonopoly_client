@@ -24,7 +24,9 @@ private:
 	int m_playerIndex;
 	class Player* m_players [4] = {nullptr, nullptr, nullptr ,nullptr};
 	bool m_myTurn = false;
-
+	class AlertText* m_alertText;
+	class Money* m_money;
+	class Map* m_map = nullptr;
 public:
 	GameView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, IDWriteTextFormat* _textFormat, ID2D1SolidColorBrush* _black, ID2D1SolidColorBrush* _color1, ID2D1SolidColorBrush* _color2);
 	~GameView();
@@ -44,5 +46,12 @@ public:
 	void GameUserAsync(std::vector<class User>& _data);
 	void TurnSend(int _playerIdx);
 	void DiceDropResult(DiceData* _diceData);
+	void PlayerMove(char* _data);
+
+
+	void					GameBuyRegionModalProcessResponse(char* _dataPtr);
+	void					MoneyPassCost(char* _dataPtr);
+	void					GameOtherBuyResponse(char* _dataPtr);
+
 };
 

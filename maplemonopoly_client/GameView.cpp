@@ -8,6 +8,10 @@
 #include "DiceBtn.h"
 #include "Player.h"
 #include "Dice.h"
+#include "AlertText.h"
+#include "Sound.h"
+#include "Map.h"
+#include "Money.h"
 GameView::GameView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, IDWriteTextFormat* _textFormat, ID2D1SolidColorBrush* _black, ID2D1SolidColorBrush* _color1, ID2D1SolidColorBrush* _color2) : m_rt(_rt), m_crt(_crt), m_textFormat(_textFormat), m_blackBrush(_black), m_colorBrush1(_color1), m_colorBrush2(_color2)
 {
     Init();
@@ -27,15 +31,19 @@ void GameView::Init()
 	m_uiVector[GAMEVIEW_GAMEUSER3] = new UserInfo3(0, 525, 250, 75, false, m_blackBrush, m_textFormat, 2);
 	m_uiVector[GAMEVIEW_GAMEUSER4] = new UserInfo4(550, 525, 250, 75, false, m_blackBrush, m_textFormat,3);
 	m_dice = new Dice();
+	m_alertText = new AlertText(332,361,130,70,false);
+	m_map = new Map();
+	m_money = new Money();
 }
 
 void GameView::Update(int _deltaTick)
 {
 	for (auto& player : m_players)
 		if (player)
-			player->Update(_deltaTick);
+			player->Update(_deltaTick,m_playerIndex);
 
 	m_dice->Update(_deltaTick);
+	m_money->Update(_deltaTick, m_alertText);
 }
 
 void GameView::Render()
@@ -58,12 +66,15 @@ void GameView::Render()
 			}
 		}
 
+	m_map->Render();
 
 	for (auto& player : m_players)
 		if (player)
 			player->Render();
 
 	m_dice->Render();
+	m_money->Render();
+	m_alertText->Render();
 
 }
 
@@ -135,9 +146,20 @@ void GameView::GameUserAsync(std::vector<User>& _data)
 void GameView::TurnSend(int _playerIdx)
 {
 	m_dice->Hold(_playerIdx);
+	for (int i = 0; i < 4; i++)
+	{
+		if (static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + i]))
+			static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + i])->Opacity(true);
+	}
+
+	if (static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + _playerIdx]))
+		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + _playerIdx])->Opacity(false);
 
 	if (m_playerIndex == _playerIdx)
+	{
+		ResourceManager::GetInstance()->GetSound(MYTURN_SOUND)->Playing(false);
 		m_myTurn = true;
+	}
 	else
 		m_myTurn = false;
 }
@@ -146,4 +168,87 @@ void GameView::DiceDropResult(DiceData* _diceData)
 {
 	bool myTurn = m_playerIndex == _diceData->_playerIndex;
 	m_dice->Drop(_diceData, myTurn);
+	if (_diceData->_dice1 == _diceData->_dice2)
+		m_alertText->SetState(AlertTextState::AlertTextState_DOUBLE);
+}
+
+void GameView::PlayerMove(char* _data)
+{
+	Region dest = *(Region*)_data;
+	int playerIndex = *(int*)(_data + sizeof(Region));
+	bool salry = *(bool*)(_data + sizeof(Region) + sizeof(int));
+	int playerMoney = *(int*)(_data + sizeof(Region) + sizeof(int) + sizeof(bool));
+
+	static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex])->SetMoney(playerMoney);
+	m_players[playerIndex]->Move(dest);
+	m_alertText->SetState(AlertTextState::AlertTextState_NONE);
+}
+
+void GameView::GameBuyRegionModalProcessResponse(char* _dataPtr)
+{
+	int playerIndex = (*(int*)_dataPtr);
+	Region region = (*(Region*)(_dataPtr + 4));
+	int money = *(int*)(_dataPtr + 4 + sizeof(Region));
+
+
+	m_alertText->SetMoney(region._passCost);
+
+	m_money->GameBuyRegionModalProcessResponse(playerIndex);
+
+	m_map->Async(region);
+	m_players[playerIndex]->SetMoney(money);
+
+	static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex])->SetMoney(money);
+
+	if (m_playerIndex == playerIndex)
+		Network::GetInstance()->SendPacket(nullptr, PROCESS_GAME_NEXTTURN_REQUEST, 0, 0);
+}
+
+void GameView::MoneyPassCost(char* _dataPtr)
+{
+	int playerIndex = (*(int*)_dataPtr);
+	int money = (*(int*)(_dataPtr + 4));
+	int otherPlayerIdx = (*(int*)(_dataPtr + 8));
+	int otherMoney = (*(int*)(_dataPtr + 12));
+
+	int o_money = m_players[playerIndex]->GetMoney();
+	int dif = o_money - money;
+
+	m_alertText->SetMoney(dif);
+
+	m_money->MoneyPassCost(playerIndex, otherPlayerIdx);
+
+	m_players[playerIndex]->SetMoney(money);
+	m_players[otherPlayerIdx]->SetMoney(otherMoney);
+
+	if (static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex]))
+		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex])->SetMoney(money);
+
+	if (static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + otherPlayerIdx]))
+		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + otherPlayerIdx])->SetMoney(otherMoney);
+}
+
+void GameView::GameOtherBuyResponse(char* _dataPtr)
+{
+	int playerIndex = (*(int*)_dataPtr);
+	Region region = (*(Region*)(_dataPtr + 4));
+	int money = *(int*)(_dataPtr + 4 + sizeof(Region));
+	int otherMoney = *(int*)(_dataPtr + 4 + sizeof(Region) + 4);
+	int otherIdx = *(int*)(_dataPtr + 4 + sizeof(Region) + 4 + 4);
+	m_alertText->SetMoney(region._passCost);
+
+	m_money->GameOtherBuyResponse(playerIndex, otherIdx);
+
+	m_map->Async(region);
+	m_players[playerIndex]->SetMoney(money);
+	m_players[otherIdx]->SetMoney(otherMoney);
+
+	if (static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex]))
+		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex])->SetMoney(money);
+
+	if (static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + otherIdx]))
+		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + otherIdx])->SetMoney(otherMoney);
+
+	if (m_playerIndex == playerIndex)
+		Network::GetInstance()->SendPacket(nullptr, PROCESS_GAME_NEXTTURN_REQUEST, 0, 0);
 }

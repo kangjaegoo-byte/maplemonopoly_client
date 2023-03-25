@@ -52,6 +52,11 @@ void Player::Render()
 
 void Player::Update(int _tick)
 {
+
+}
+
+void Player::Update(int _tick, int _playerIndex)
+{
 	m_sumTick += _tick;
 	if (m_sumTick < PASSTICK) return;
 
@@ -85,7 +90,7 @@ void Player::Update(int _tick)
 			if (m_myPlayer)
 			{
 				// 1) 유저가 해당 지역에 도착했다고 서버에 알려준다.
-				// Network::GetInstance()->SendPacket((char*)&_playerIndx, PROCESS_GAME_MOVE_COMPLETE_REQUEST, PACKET_HEADER_SIZE + sizeof(int), 0);
+				Network::GetInstance()->SendPacket((char*)&_playerIndex, PROCESS_GAME_MOVE_COMPLETE_REQUEST, sizeof(int), 0);
 			}
 		}
 		break;
