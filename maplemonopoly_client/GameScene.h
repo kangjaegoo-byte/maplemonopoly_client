@@ -43,11 +43,12 @@ public:
 	void PlayerMove(char* _data);
 	void GameBuyRegion(Region* dataPtr);
 
-
+	void PlayerDead(char* _data);
 	void					GameBuyRegionModalProcessResponse(char* _dataPtr);
 	void					MoneyPassCost(char* _dataPtr);
 	void					GameBuyRegionModalOtherProcessResponseEx(char* _dataPtr);
 	void					GameOtherBuyResponse(char* _dataPtr);
+	void GameEnd(int _data);
 
 };
 

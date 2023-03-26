@@ -128,6 +128,11 @@ void GameScene::GameBuyRegion(Region* dataPtr)
 	m_zindex = GAME_MODAL_VIEW;
 }
 
+void GameScene::PlayerDead(char* _data)
+{
+	static_cast<GameView*>(m_viewVector[GAME_VIEW])->PlayerDead(_data);
+}
+
 void GameScene::GameBuyRegionModalProcessResponse(char* _dataPtr)
 {
 	static_cast<GameView*>(m_viewVector[GAME_VIEW])->GameBuyRegionModalProcessResponse(_dataPtr);
@@ -147,4 +152,9 @@ void GameScene::GameBuyRegionModalOtherProcessResponseEx(char* _dataPtr)
 void GameScene::GameOtherBuyResponse(char* _dataPtr)
 {
 	static_cast<GameView*>(m_viewVector[GAME_VIEW])->GameOtherBuyResponse(_dataPtr);
+}
+
+void GameScene::GameEnd(int _data)
+{
+	static_cast<GameView*>(m_viewVector[GAME_VIEW])->GameEnd(_data);
 }

@@ -29,5 +29,7 @@ public:
 	void					MoneyPassCost(char* _dataPtr);
 	void					GameBuyRegionModalOtherProcessResponseEx(char* _dataPtr);
 	void					GameOtherBuyResponse(char* _dataPtr);
+	void PlayerDead(char* _data);
+	void GameEnd(int _data);
 };
 

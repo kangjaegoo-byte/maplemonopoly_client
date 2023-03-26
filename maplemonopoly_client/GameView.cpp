@@ -24,6 +24,7 @@ GameView::~GameView()
 
 void GameView::Init()
 {
+	InitializeCriticalSection(&m_gameLock);
 	m_uiVector.resize(GAMEVIEW_GAME_UI_COUNT, nullptr);
 	m_uiVector[GAMEVIEW_GAMEDICEBTN] = new DiceBtn(350, 342, 96, 81, false);
 	m_uiVector[GAMEVIEW_GAMEUSER1] = new UserInfo(0, 0, 250, 75, false, m_blackBrush, m_textFormat,0);
@@ -38,12 +39,14 @@ void GameView::Init()
 
 void GameView::Update(int _deltaTick)
 {
+	EnterCriticalSection(&m_gameLock);
 	for (auto& player : m_players)
 		if (player)
 			player->Update(_deltaTick,m_playerIndex);
 
 	m_dice->Update(_deltaTick);
 	m_money->Update(_deltaTick, m_alertText);
+	LeaveCriticalSection(&m_gameLock);
 }
 
 void GameView::Render()
@@ -52,6 +55,7 @@ void GameView::Render()
     GetClientRect(D2D1Core::GetInstance()->GetHWND(), &rc);
     m_crt->DrawBitmap(ResourceManager::GetInstance()->GetBitmap(GAME_BOARD_BITMAP)->GetBitmap(), D2D1::RectF(rc.left, rc.top, rc.right, rc.bottom));
 
+	EnterCriticalSection(&m_gameLock);
 	for (int i = 0; i < GAMEVIEW_GAME_UI_COUNT; i++)
 		if (m_uiVector[i])
 		{
@@ -75,11 +79,13 @@ void GameView::Render()
 	m_dice->Render();
 	m_money->Render();
 	m_alertText->Render();
+	LeaveCriticalSection(&m_gameLock);
 
 }
 
 void GameView::Clean()
 {
+	DeleteCriticalSection(&m_gameLock);
 	for (auto& ui : m_uiVector)
 	{
 		if (ui)
@@ -184,6 +190,18 @@ void GameView::PlayerMove(char* _data)
 	m_alertText->SetState(AlertTextState::AlertTextState_NONE);
 }
 
+void GameView::GameEnd(int _data)
+{
+	if (m_playerIndex == _data)
+	{
+		// 승리 모달창 띄우기
+	}
+	else
+	{
+		// 로비로 나가기
+	}
+}
+
 void GameView::GameBuyRegionModalProcessResponse(char* _dataPtr)
 {
 	int playerIndex = (*(int*)_dataPtr);
@@ -251,4 +269,34 @@ void GameView::GameOtherBuyResponse(char* _dataPtr)
 
 	if (m_playerIndex == playerIndex)
 		Network::GetInstance()->SendPacket(nullptr, PROCESS_GAME_NEXTTURN_REQUEST, 0, 0);
+}
+
+void GameView::PlayerDead(char* _data)
+{
+	EnterCriticalSection(&m_gameLock);
+	int playerIndex = (*(int*)_data);
+	int otherIndex = (*(int*)(_data + 4));
+	int otherMoney = (*(int*)(_data + 8));
+
+	m_map->DestoryUser(playerIndex);
+	delete m_players[playerIndex];
+	m_players[playerIndex] = nullptr;
+
+	m_alertText->SetMoney(otherMoney);
+
+	m_money->MoneyPassCost(playerIndex, otherIndex);
+	
+	static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex])->Opacity(true);
+
+	if (static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex]))
+		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex])->SetMoney(0);
+
+	if (static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + otherIndex]))
+		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + otherIndex])->SetMoney(otherMoney);
+
+	if (m_playerIndex == playerIndex)
+		Network::GetInstance()->SendPacket((char*)& playerIndex, PROCESS_GAME_USER_DEAD_REQUEST, sizeof(int), 0);
+
+
+	LeaveCriticalSection(&m_gameLock);
 }

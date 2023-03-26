@@ -146,6 +146,13 @@ void GameService::Recv(char* _buffer)
 		GameBuyRegionModalOtherProcessResponseEx(dataPtr);
 		break;
 
+	case PROCESS_GAME_USER_DEAD:
+		PlayerDead(dataPtr);
+		break;
+
+	case PROCESS_GAME_END_RESPONSE:
+		GameEnd(static_cast<int>(*dataPtr));
+		break;
 	}
 
 }
@@ -303,4 +310,14 @@ void GameService::GameBuyRegionModalOtherProcessResponseEx(char* _dataPtr)
 void GameService::GameOtherBuyResponse(char* _dataPtr)
 {
 	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->GameOtherBuyResponse(_dataPtr);
+}
+
+void GameService::PlayerDead(char* _data)
+{
+	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->PlayerDead(_data);
+}
+
+void GameService::GameEnd(int _data)
+{
+	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->GameEnd(_data);
 }
