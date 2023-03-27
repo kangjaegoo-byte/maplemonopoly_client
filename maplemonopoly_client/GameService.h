@@ -31,5 +31,6 @@ public:
 	void					GameOtherBuyResponse(char* _dataPtr);
 	void PlayerDead(char* _data);
 	void GameEnd(int _data);
+	void PlayerDisconnect(int _playerIndex);
 };
 

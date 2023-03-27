@@ -39,9 +39,9 @@ void CRoomView::Render()
 
 void CRoomView::Clean()
 {
-	for (int zindex = 0; zindex < CROOM_UICOUNT; zindex++)
-		if (m_uiVector[zindex])
-			delete m_uiVector[zindex];
+	//for (int zindex = 0; zindex < CROOM_UICOUNT; zindex++)
+	//	if (m_uiVector[zindex])
+	//		delete m_uiVector[zindex];
 }
 
 void CRoomView::MouseMoveEvent(int _x, int _y)

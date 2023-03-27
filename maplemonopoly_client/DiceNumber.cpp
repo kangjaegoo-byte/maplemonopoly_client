@@ -11,19 +11,7 @@ DiceNumber::DiceNumber(int _x, int _y) : GameObject(_x, _y)
 
 DiceNumber::~DiceNumber()
 {
-	ResourceManager::GetInstance()->DeleteSprite(GAME_ONE_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_TWO_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_THREE_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_FOUR_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_FIVE_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_SIX_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_SEVEN_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_EIGHT_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_NINE_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_TEN_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_ELEVEN_DICE);
-	ResourceManager::GetInstance()->DeleteSprite(GAME_TWELVE_DICE);
-	ResourceManager::GetInstance()->DeleteBitmap(GAME_DICE_BITMAP);
+
 }
 
 void DiceNumber::Init()

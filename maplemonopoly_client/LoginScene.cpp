@@ -77,7 +77,6 @@ void LoginScene::Clean()
 {
 	m_textFormat->Release();
 	m_whiteBrush->Release();
-	ResourceManager::GetInstance()->DeleteBitmap(LOGIN_ALERTMODAL_BITMAP);
 	ResourceManager::GetInstance()->DeleteBitmap(LOGIN_BACKGROUND_BITMAP);
 	ResourceManager::GetInstance()->DeleteSound(LOGIN_BGM);
 	for (int i = 0; i < LOGIN_UI_COUNT; i++)
@@ -117,10 +116,6 @@ SceneChangeData LoginScene::Change()
 {
 	if (m_change == false)
 		return SceneChangeData{ false, SceneType::NONE };
-
-
 	m_bgm = nullptr;
-	Clean();
-
-	return SceneChangeData{ true, SceneType::LOBBY_SCENE };
+	return SceneChangeData{ false, SceneType::LOBBY_SCENE };
 }

@@ -42,7 +42,7 @@ ClientMap::ClientMap()
 
 	m_maps[24] = ClientMapData{ 709 ,288,false,0,0 };		// 좀비레이스 180 왼쪽방향으로 회전
 	m_maps[25] = ClientMapData{ 674 ,340,false,637,310 };	// 호텔
-	m_maps[26] = ClientMapData{ 640 ,364,false,0,0 };		// 카드
+	m_maps[26] = ClientMapData{ 640 ,364,false,593,338 };		// 카드
 	m_maps[27] = ClientMapData{ 602 ,391,false,570,362 };	// 카지노
 	m_maps[28] = ClientMapData{ 561 ,421,false,0,0 }; // 화학마크
 	m_maps[29] = ClientMapData{ 534 ,444,false,495,413 }; // 군사기지

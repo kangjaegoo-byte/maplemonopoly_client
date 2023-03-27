@@ -21,6 +21,7 @@ private:
 	std::vector<class View*>			m_viewVector;
 	int							m_zindex = 0;
 	int	m_playerIndex;
+	bool m_change = false;
 public:
 	GameScene();
 	~GameScene();
@@ -49,6 +50,7 @@ public:
 	void					GameBuyRegionModalOtherProcessResponseEx(char* _dataPtr);
 	void					GameOtherBuyResponse(char* _dataPtr);
 	void GameEnd(int _data);
+	void PlayerDisconnect(int _data);
 
 };
 

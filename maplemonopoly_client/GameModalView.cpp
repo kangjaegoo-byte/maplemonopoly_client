@@ -73,7 +73,11 @@ void GameModalView::Render()
 
 void GameModalView::Clean()
 {
-	DeleteCriticalSection(&m_gameLock);
+	//DeleteCriticalSection(&m_gameLock);
+
+
+
+
 }
 
 ViewType GameModalView::ChangeView()

@@ -198,6 +198,12 @@
     <ClCompile Include="Money.cpp">
       <Filter>src\data</Filter>
     </ClCompile>
+    <ClCompile Include="GameEndModal.cpp">
+      <Filter>base\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEndView.cpp">
+      <Filter>src\view</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -364,6 +370,12 @@
     </ClInclude>
     <ClInclude Include="Money.h">
       <Filter>src\data</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEndModal.h">
+      <Filter>base\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEndView.h">
+      <Filter>src\view</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

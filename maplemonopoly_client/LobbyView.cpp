@@ -63,11 +63,7 @@ void LobbyView::Render()
 
 void LobbyView::Clean()
 {
-	ResourceManager::GetInstance()->DeleteBitmap(LOBBY_BACKGROUND_BITMAP);
 
-	for (int zindex = 0; zindex < LobbyView_UICOUNT; zindex++)
-		if (m_uiVector[zindex])
-			delete m_uiVector[zindex];
 }
 
 void LobbyView::MouseMoveEvent(int _x, int _y)

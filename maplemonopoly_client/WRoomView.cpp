@@ -115,10 +115,11 @@ void WRoomView::Render()
 
 void WRoomView::Clean()
 {
-	for (int zindex = 0; zindex < WROOM_UICOUNT; zindex++)
-		if (m_uiVector[zindex])
-			delete m_uiVector[zindex];
-	DeleteCriticalSection(&m_wroomLock);
+	//for (int zindex = 0; zindex < WROOM_UICOUNT; zindex++)
+	//	if (m_uiVector[zindex])
+	//		delete m_uiVector[zindex];
+	//DeleteCriticalSection(&m_wroomLock);
+	static_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->ClearChat();
 }
 
 void WRoomView::MouseMoveEvent(int _x, int _y)

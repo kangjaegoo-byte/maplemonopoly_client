@@ -149,6 +149,8 @@
     <ClCompile Include="DiceBtn.cpp" />
     <ClCompile Include="DiceNumber.cpp" />
     <ClCompile Include="FPS.cpp" />
+    <ClCompile Include="GameEndModal.cpp" />
+    <ClCompile Include="GameEndView.cpp" />
     <ClCompile Include="GameModalView.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -211,6 +213,8 @@
     <ClInclude Include="DiceBtn.h" />
     <ClInclude Include="DiceNumber.h" />
     <ClInclude Include="FPS.h" />
+    <ClInclude Include="GameEndModal.h" />
+    <ClInclude Include="GameEndView.h" />
     <ClInclude Include="GameModalView.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameScene.h" />

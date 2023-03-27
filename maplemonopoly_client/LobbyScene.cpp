@@ -52,27 +52,10 @@ void LobbyScene::Render()
 
 void LobbyScene::Clean()
 {
-	m_textFormat->Release();
-	m_boldTextAliginNormalForamt->Release();
-	m_blackBrush->Release();
-	m_redBrush->Release();
-	m_blueBrush->Release();
-	m_staticTextAlignFormat->Release();
-	ResourceManager::GetInstance()->DeleteBitmap(LOBBY_BACKGROUND_BITMAP);
-	ResourceManager::GetInstance()->DeleteBitmap(LOBBY_CREATEROOMMODAL_BITMAP);
-	ResourceManager::GetInstance()->DeleteBitmap(WATING_ROOM_BACKGROUND_BITMAP);
-	ResourceManager::GetInstance()->DeleteBitmap(ORANGE_MURSHROOM_BITMAP);
-	ResourceManager::GetInstance()->DeleteBitmap(HORN_MURSHROOM_BITMAP);
-	ResourceManager::GetInstance()->DeleteBitmap(PIG_BITMAP);
-	ResourceManager::GetInstance()->DeleteAnimation(HORN_MURSHROOM_IDLE_ANIMATION);
-	ResourceManager::GetInstance()->DeleteAnimation(PIG_IDLE_ANIMATION);
-	ResourceManager::GetInstance()->DeleteAnimation(ORANGE_MURSHROOM_IDLE_ANIMATION);
-
 	for (int i = 0; i < VIEW_COUNT; i++)
-		if (m_viewVector[i])
-			delete m_viewVector[i];
+		m_viewVector[i]->Clean();
 }
-
+	
 void LobbyScene::MouseMoveEvent(int _x, int _y)
 {
 	m_viewVector[m_zindex]->MouseMoveEvent(_x, _y);
@@ -99,7 +82,7 @@ SceneChangeData LobbyScene::Change()
 	else
 	{
 		m_change = false;
-		return SceneChangeData{ true, SceneType::GAME_SCENE };
+		return SceneChangeData{ false, SceneType::GAME_SCENE };
 	}
 }
 

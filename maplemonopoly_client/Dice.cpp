@@ -154,19 +154,6 @@ void Dice::Update(int _tick)
 void Dice::Clean()
 {
 	DeleteCriticalSection(&m_diceLock);
-	ResourceManager::GetInstance()->DeleteSoundEx(DICE_DROP_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(ONE_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(TWO_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(THREE_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(FOUR_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(FIVE_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(SIX_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(SEVEN_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(EIGHT_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(NINE_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(TEN_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(ELEVEN_SOUND);
-	ResourceManager::GetInstance()->DeleteSoundEx(TWELVE_SOUND);
 	delete m_diceNumber;
 }
 
@@ -192,8 +179,8 @@ void Dice::Hold(int _playerIndex)
 		int _y = 0;
 	};
 
-	Pos startPos1 [4] = { {137,129},{686,120},{94, 513},{678,511} };
-	Pos startPos2 [4] = { {79,153},{720,161},{148, 544},{586,560} };
+	Pos startPos1 [4] = { {137,129},{686,120},{94, 513},{701,455} };
+	Pos startPos2 [4] = { {79,153},{720,161},{148, 544},{663,485} };
 
 
 	m_dice1X = startPos1[_playerIndex]._x;

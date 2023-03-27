@@ -85,12 +85,44 @@ void GameView::Render()
 
 void GameView::Clean()
 {
-	DeleteCriticalSection(&m_gameLock);
-	for (auto& ui : m_uiVector)
+	for (int i = 0; i < 4; i++)
 	{
-		if (ui)
-			delete ui;
+		if (m_players[i])
+		{
+			delete m_players[i];
+			m_players[i] = nullptr;
+		}
 	}
+
+	delete m_uiVector[GAMEVIEW_GAMEUSER1];
+	delete m_uiVector[GAMEVIEW_GAMEUSER2];
+	delete m_uiVector[GAMEVIEW_GAMEUSER3];
+	delete m_uiVector[GAMEVIEW_GAMEUSER4];
+	delete m_uiVector[GAMEVIEW_GAMEDICEBTN];
+	delete m_dice;
+	delete m_alertText;
+	delete m_map;
+	delete m_money;
+
+	m_uiVector[GAMEVIEW_GAMEUSER1] = nullptr;
+	m_uiVector[GAMEVIEW_GAMEUSER2] = nullptr;
+	m_uiVector[GAMEVIEW_GAMEUSER3] = nullptr;
+	m_uiVector[GAMEVIEW_GAMEUSER4] = nullptr;
+	m_uiVector[GAMEVIEW_GAMEDICEBTN] = nullptr;
+	m_dice	 = nullptr;
+	m_alertText = nullptr;
+	m_map	 = nullptr;
+	m_money	 = nullptr;
+
+	m_uiVector[GAMEVIEW_GAMEUSER1] = new UserInfo(0, 0, 250, 75, false, m_blackBrush, m_textFormat, 0);
+	m_uiVector[GAMEVIEW_GAMEUSER2] = new UserInfo2(550, 0, 250, 75, false, m_blackBrush, m_textFormat, 1);
+	m_uiVector[GAMEVIEW_GAMEUSER3] = new UserInfo3(0, 525, 250, 75, false, m_blackBrush, m_textFormat, 2);
+	m_uiVector[GAMEVIEW_GAMEUSER4] = new UserInfo4(550, 525, 250, 75, false, m_blackBrush, m_textFormat, 3);
+	m_dice = new Dice();
+	m_alertText = new AlertText(332, 361, 130, 70, false);
+	m_map = new Map();
+	m_money = new Money();
+	m_uiVector[GAMEVIEW_GAMEDICEBTN] = new DiceBtn(350, 342, 96, 81, false);
 }
 
 void GameView::MouseMoveEvent(int _x, int _y)
@@ -127,10 +159,19 @@ void GameView::MouseClickUpEnvet(int _x, int _y)
 void GameView::CharEvent(WPARAM _key)
 {
 }
-
+ 
 ViewType GameView::ChangeView()
 {
-    return ViewType::VIEW_NONE;
+	if (m_viewChange == false)
+	{
+		m_viewChange = false;
+		return ViewType::VIEW_NONE;
+	}
+	else
+	{
+		m_viewChange = false;
+		return ViewType::WROOM_VIEW;
+	}
 }
 
 void GameView::GameUserNumber(int _dataPtr)
@@ -195,11 +236,27 @@ void GameView::GameEnd(int _data)
 	if (m_playerIndex == _data)
 	{
 		// 승리 모달창 띄우기
+		m_viewChange = true;
 	}
 	else
 	{
 		// 로비로 나가기
+		m_change = true;
 	}
+}
+
+void GameView::PlayerDisconnect(int _playerIndex)
+{
+	EnterCriticalSection(&m_gameLock);
+
+	m_map->DestoryUser(_playerIndex);
+	delete m_players[_playerIndex];
+	m_players[_playerIndex] = nullptr;
+
+
+	static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + _playerIndex])->Opacity(true);
+	static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + _playerIndex])->SetMoney(0);
+	LeaveCriticalSection(&m_gameLock);
 }
 
 void GameView::GameBuyRegionModalProcessResponse(char* _dataPtr)
@@ -208,13 +265,13 @@ void GameView::GameBuyRegionModalProcessResponse(char* _dataPtr)
 	Region region = (*(Region*)(_dataPtr + 4));
 	int money = *(int*)(_dataPtr + 4 + sizeof(Region));
 
-
-	m_alertText->SetMoney(region._passCost);
+	int o_money = m_players[playerIndex]->GetMoney();
+	const int dif = abs(o_money - money);
 
 	m_money->GameBuyRegionModalProcessResponse(playerIndex);
-
 	m_map->Async(region);
 	m_players[playerIndex]->SetMoney(money);
+	m_alertText->SetMoney(region._passCost);
 
 	static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex])->SetMoney(money);
 
@@ -228,12 +285,9 @@ void GameView::MoneyPassCost(char* _dataPtr)
 	int money = (*(int*)(_dataPtr + 4));
 	int otherPlayerIdx = (*(int*)(_dataPtr + 8));
 	int otherMoney = (*(int*)(_dataPtr + 12));
-
 	int o_money = m_players[playerIndex]->GetMoney();
-	int dif = o_money - money;
-
+	int dif = abs(o_money - money);
 	m_alertText->SetMoney(dif);
-
 	m_money->MoneyPassCost(playerIndex, otherPlayerIdx);
 
 	m_players[playerIndex]->SetMoney(money);
@@ -253,13 +307,14 @@ void GameView::GameOtherBuyResponse(char* _dataPtr)
 	int money = *(int*)(_dataPtr + 4 + sizeof(Region));
 	int otherMoney = *(int*)(_dataPtr + 4 + sizeof(Region) + 4);
 	int otherIdx = *(int*)(_dataPtr + 4 + sizeof(Region) + 4 + 4);
-	m_alertText->SetMoney(region._passCost);
-
+	int o_money = m_players[playerIndex]->GetMoney();
 	m_money->GameOtherBuyResponse(playerIndex, otherIdx);
-
 	m_map->Async(region);
 	m_players[playerIndex]->SetMoney(money);
 	m_players[otherIdx]->SetMoney(otherMoney);
+
+	const int dif = abs(o_money - money);
+	m_alertText->SetMoney(dif);
 
 	if (static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex]))
 		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex])->SetMoney(money);
@@ -299,4 +354,13 @@ void GameView::PlayerDead(char* _data)
 
 
 	LeaveCriticalSection(&m_gameLock);
+}
+
+bool GameView::GameEnd()
+{
+	bool ret = m_change;
+
+	m_change = false;
+
+	return ret;
 }

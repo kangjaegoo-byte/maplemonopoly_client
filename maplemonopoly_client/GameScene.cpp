@@ -4,6 +4,7 @@
 #include "GameView.h"
 #include "User.h"
 #include "GameModalView.h"
+#include "GameEndView.h"
 GameScene::GameScene() : Scene(GAME_SCENE)
 {
 	Init();
@@ -25,6 +26,7 @@ void GameScene::Init()
 	m_viewVector.resize(GAME_VIEW_COUNT);
 	m_viewVector[GAME_VIEW] = new GameView(m_rt, m_crt, m_textFormat, m_colorBrush2, m_colorBrush1, m_colorBrush2);
 	m_viewVector[GAME_MODAL_VIEW] = new GameModalView(m_rt, m_crt, m_textFormat, m_blackBrush, m_colorBrush1, m_colorBrush2);
+	m_viewVector[GAME_END_VIEW] = new GameEndView(m_rt, m_crt, m_textFormat, m_blackBrush, m_colorBrush1, m_colorBrush2);
 }
 
 void GameScene::Update(int _deltaTick)
@@ -34,6 +36,11 @@ void GameScene::Update(int _deltaTick)
 	if (viewChange == ViewType::VIEW_NONE)
 	{
 		m_viewVector[m_zindex]->Update(_deltaTick);
+	}
+	else if (viewChange == ViewType::WROOM_VIEW) 
+	{
+		m_zindex = viewChange;
+		static_cast<GameEndView*>(m_viewVector[m_zindex])->Show();
 	}
 	else
 	{
@@ -58,15 +65,9 @@ void GameScene::Render()
 
 void GameScene::Clean()
 {
-	m_blackBrush->Release();
-	m_textFormat->Release();
-	m_colorBrush1->Release();
-	m_colorBrush2->Release();
-	ResourceManager::GetInstance()->DeleteSoundEx(MYTURN_SOUND);
-	for (auto& item : m_uiVector)
+	for (int i = 0; i < GAME_VIEW_COUNT; i++) 
 	{
-		if (item)
-			delete item;
+		m_viewVector[i]->Clean();
 	}
 }
 
@@ -92,7 +93,20 @@ void GameScene::CharEvent(WPARAM _key)
 
 SceneChangeData GameScene::Change()
 {
-    return SceneChangeData { false, SceneType::NONE };
+	if (static_cast<GameEndView*>(m_viewVector[GAME_END_VIEW])->GameEnd())
+	{
+		m_change = true;
+	}
+
+	if (m_change)
+	{
+		m_change = false;
+		return SceneChangeData{ false, SceneType::LOBBY_SCENE };
+	}
+	else 
+	{
+		return SceneChangeData{ false, SceneType::NONE };
+	}
 }
 
 void GameScene::GameUserNumber(int _dataPtr)
@@ -104,6 +118,7 @@ void GameScene::GameUserNumber(int _dataPtr)
 
 void GameScene::GameUserAsync(std::vector<User>& _data)
 {
+	m_zindex = 0;
 	static_cast<GameView*>(m_viewVector[GAME_VIEW])->GameUserAsync(_data);
 }
 
@@ -157,4 +172,14 @@ void GameScene::GameOtherBuyResponse(char* _dataPtr)
 void GameScene::GameEnd(int _data)
 {
 	static_cast<GameView*>(m_viewVector[GAME_VIEW])->GameEnd(_data);
+
+	if (static_cast<GameView*>(m_viewVector[GAME_VIEW])->GameEnd()) 
+	{
+		m_change = true;
+	}
+}
+
+void GameScene::PlayerDisconnect(int _data)
+{
+	static_cast<GameView*>(m_viewVector[GAME_VIEW])->PlayerDisconnect(_data);
 }

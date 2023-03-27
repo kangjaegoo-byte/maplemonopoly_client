@@ -101,6 +101,7 @@ void LoadingScene::Add(int _percent)
 void LoadingScene::Flush()
 {
 	m_percent = LoadingBarWidht;
+	Sleep(50);
 	m_loadEnd = true;
 }
 
@@ -128,15 +129,15 @@ unsigned int _stdcall LaodProc(void* Args)
 	std::vector<WCHAR*> animationVector;
 	std::vector<WCHAR*> spriteVector;
 
-	const WCHAR* bitmapPathList[] = { L"",L"..\\imgpack\\login\\*",L"..\\imgpack\\lobby\\*",L"..\\imgpack\\game\\*" };
-	const WCHAR* soundPathList[] = { L"",L"..\\soundpack\\login\\*",L"..\\soundpack\\lobby\\*",L"..\\soundpack\\game\\*" };
-	const WCHAR* animationPathList[] = { L"",L"",L"..\\animation\\lobby\\*",L"..\\animation\\game\\*" };
-	const WCHAR* spritePathList[] = { L"",L"",L"",L"..\\sprite\\game\\*" };
+	const WCHAR* bitmapPathList[] = { L"",L"..\\imgpack\\resource\\*",L"",L"" };
+	const WCHAR* soundPathList[] = { L"",L"..\\soundpack\\resource\\*",L"",L"" };
+	const WCHAR* animationPathList[] = { L"",L"..\\animation\\resource\\*",L"",L"" };
+	const WCHAR* spritePathList[] = { L"",L"..\\sprite\\resource\\*",L"",L"" };
 
-	const WCHAR* rootBPathList[] = { L"",L"..\\imgpack\\login\\", L"..\\imgpack\\lobby\\",L"..\\imgpack\\game\\" };
-	const WCHAR* rootSPathList[] = { L"",L"..\\soundpack\\login\\", L"..\\soundpack\\lobby\\",L"..\\soundpack\\game\\" };
-	const WCHAR* rootAPathList[] = { L"",L"", L"..\\animation\\lobby\\",L"..\\animation\\game\\" };
-	const WCHAR* rootSpPathjList[] = { L"",L"", L"",L"..\\sprite\\game\\" };
+	const WCHAR* rootBPathList[] = { L"",L"..\\imgpack\\resource\\", L"",L"" };
+	const WCHAR* rootSPathList[] = { L"",L"..\\soundpack\\resource\\", L"",L"" };
+	const WCHAR* rootAPathList[] = { L"",L"..\\animation\\resource\\", L"",L"" };
+	const WCHAR* rootSpPathjList[] = { L"",L"..\\sprite\\resource\\", L"",L"" };
 
 	SceneType loadscene = lac->GetLoadSceneType();
 
@@ -418,7 +419,6 @@ unsigned int _stdcall LaodProc(void* Args)
 		Sleep(50);
 	}
 	lac->Flush();
-	Sleep(1000);
 	return 0;
 }
 

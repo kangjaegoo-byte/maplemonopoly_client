@@ -49,7 +49,9 @@ void GameService::SceneChange()
 	}
 	else
 	{
+		SceneType old = SceneManager::GetInstance()->GetNowScene();
 		SceneManager::GetInstance()->Change(change._type);
+		SceneManager::GetInstance()->GetScene(old)->Clean();
 	}
 }
 
@@ -126,6 +128,7 @@ void GameService::Recv(char* _buffer)
 	case PROCESS_GAME_BUY_REGION_MODAL_RESPONSE:
 		GameBuyRegion(reinterpret_cast<Region*>(dataPtr));
 		break;
+
 		// 지역구매 
 	case PROCESS_GAME_BUY_REGION_MODAL_PROCESS_RESPONSE:
 		GameBuyRegionModalProcessResponse(dataPtr);
@@ -152,6 +155,10 @@ void GameService::Recv(char* _buffer)
 
 	case PROCESS_GAME_END_RESPONSE:
 		GameEnd(static_cast<int>(*dataPtr));
+		break;
+
+	case PROCESS_PLAYER_DISCONNECT:
+		PlayerDisconnect(static_cast<int>(*dataPtr));
 		break;
 	}
 
@@ -320,4 +327,9 @@ void GameService::PlayerDead(char* _data)
 void GameService::GameEnd(int _data)
 {
 	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->GameEnd(_data);
+}
+
+void GameService::PlayerDisconnect(int _playerIndex)
+{
+	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->PlayerDisconnect(_playerIndex);
 }
