@@ -17,6 +17,7 @@ UserInfo2::~UserInfo2()
     delete m_pickView;
     delete m_usernameText;
     delete m_moneyText;
+    delete m_rankText;
 }
 
 void UserInfo2::Init()
@@ -24,6 +25,7 @@ void UserInfo2::Init()
     m_pickView = new UserPickView(736,15, 55, 55, false, NOUSER);
     m_usernameText = new StaticText(618, 15, 100, 15, false, m_blackBrush, m_textformat);
     m_moneyText = new StaticText(618, 40, 100, 60, false, m_blackBrush, m_textformat);
+    m_rankText = new StaticText(567, 18, 31, 33, false, m_blackBrush, m_textformat);
 }
 
 void UserInfo2::Update(WPARAM _key)
@@ -60,6 +62,9 @@ void UserInfo2::Render()
     m_opacity ? m_pickView->ORender() : m_pickView->Render();
     m_usernameText->Render();
     m_moneyText->Render();
+
+    if (m_rankText)
+        m_rankText->RankRender();
 
 }
 

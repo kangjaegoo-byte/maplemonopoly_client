@@ -53,8 +53,7 @@ public:
 	void PlayerMove(char* _data);
 	void GameEnd(int _data);
 	void PlayerDisconnect(int _playerIndex);
-
-
+	void UpdateRank();
 	void					GameBuyRegionModalProcessResponse(char* _dataPtr);
 	void					MoneyPassCost(char* _dataPtr);
 	void					GameOtherBuyResponse(char* _dataPtr);

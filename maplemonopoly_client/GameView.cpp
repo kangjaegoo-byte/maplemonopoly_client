@@ -48,6 +48,7 @@ void GameView::Update(int _deltaTick)
 
 	m_dice->Update(_deltaTick);
 	m_money->Update(_deltaTick, m_alertText);
+	UpdateRank();
 	LeaveCriticalSection(&m_gameLock);
 }
 
@@ -266,6 +267,33 @@ void GameView::PlayerDisconnect(int _playerIndex)
 	static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + _playerIndex])->Opacity(true);
 	static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + _playerIndex])->SetMoney(0);
 	LeaveCriticalSection(&m_gameLock);
+}
+
+void GameView::UpdateRank()
+{
+	struct tempData 
+	{
+		int _playerIndex;
+		int _money;
+	};
+
+	std::vector<tempData> v;
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (m_players[i])
+		{
+			tempData t ={ i,m_players[i]->GetMoney() };
+			v.push_back(t);
+		}
+	}
+	
+	std::sort(v.begin(), v.end(), [](tempData left, tempData right) -> bool { return left._money > right._money; });
+
+	for (int i = 0; i < v.size(); i++) 
+	{
+		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + v[i]._playerIndex])->SetRank(i+1);
+	}
 }
 
 void GameView::GameBuyRegionModalProcessResponse(char* _dataPtr)

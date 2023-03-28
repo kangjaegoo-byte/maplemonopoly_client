@@ -19,6 +19,7 @@ private:
 	int					  m_userId = 0;
 	bool				  m_opacity = false;
 	int					  m_playerNumber;
+	StaticText* m_rankText = nullptr;
 public:
 	UserInfo(int _x, int _y, int _width, int _height, bool _focused, ID2D1SolidColorBrush* _brush, IDWriteTextFormat* _textForamt, int _playerNumber);
 	virtual ~UserInfo();
@@ -31,5 +32,6 @@ public:
 	void Init(User& _dt);
 	void		Opacity(bool _opacity) { m_opacity = _opacity; }
 	void		SetMoney(int _money);
+	void        SetRank(int _rank);
 };
 

@@ -5,6 +5,7 @@ class StaticText : public UIComponent
 private:
 	WCHAR					m_text[100] = L"";
 	IDWriteTextFormat* m_textformat;
+	IDWriteTextFormat* m_textBigformat;
 	ID2D1SolidColorBrush* m_colorBrush;
 	int						m_textSize = 0;
 public:
@@ -16,8 +17,11 @@ public:
 	virtual void Render()					override;
 	virtual bool ISFocus(int _x, int _y)	override;
 
+	void RankRender();
+
 	void         SetText(WCHAR* _text);
 	void         SetText(WCHAR* _text, int _dataSize);
 	void         SetText(int _data);
+	void         SetRank(int _rank);
 };
 

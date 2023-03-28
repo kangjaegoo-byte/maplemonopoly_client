@@ -17,6 +17,7 @@ UserInfo4::~UserInfo4()
     delete m_pickView;
     delete m_usernameText;
     delete m_moneyText;
+    delete m_rankText;
 }
 
 void UserInfo4::Init()
@@ -24,6 +25,7 @@ void UserInfo4::Init()
     m_pickView = new UserPickView(736, 536, 55, 55, false, NOUSER);
     m_usernameText = new StaticText(618, 536, 100, 15, false, m_blackBrush, m_textformat);
     m_moneyText = new StaticText(618, 561, 100, 60, false, m_blackBrush, m_textformat);
+    m_rankText = new StaticText(567, 550, 31, 33, false, m_blackBrush, m_textformat);
 }
 
 void UserInfo4::Update(WPARAM _key)
@@ -61,6 +63,8 @@ void UserInfo4::Render()
     m_usernameText->Render();
     m_moneyText->Render();
 
+    if (m_rankText)
+        m_rankText->RankRender();
 }
 
 bool UserInfo4::ISFocus(int _x, int _y)

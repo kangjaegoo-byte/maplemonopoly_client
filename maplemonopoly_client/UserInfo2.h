@@ -19,6 +19,7 @@ private:
 	int					  m_userId = 0;
 	bool				  m_opacity = false;
 	int					  m_playerNumber;
+	StaticText* m_rankText = nullptr;
 public:
 	UserInfo2(int _x, int _y, int _width, int _height, bool _focused, ID2D1SolidColorBrush* _brush, IDWriteTextFormat* _textForamt, int _playerNumber);
 	virtual ~UserInfo2();
