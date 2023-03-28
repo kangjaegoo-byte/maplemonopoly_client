@@ -204,6 +204,7 @@
     <ClCompile Include="GameEndView.cpp">
       <Filter>src\view</Filter>
     </ClCompile>
+    <ClCompile Include="Marker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -377,5 +378,6 @@
     <ClInclude Include="GameEndView.h">
       <Filter>src\view</Filter>
     </ClInclude>
+    <ClInclude Include="Marker.h" />
   </ItemGroup>
 </Project>

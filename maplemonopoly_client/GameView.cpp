@@ -12,6 +12,7 @@
 #include "Sound.h"
 #include "Map.h"
 #include "Money.h"
+#include "Marker.h"
 GameView::GameView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, IDWriteTextFormat* _textFormat, ID2D1SolidColorBrush* _black, ID2D1SolidColorBrush* _color1, ID2D1SolidColorBrush* _color2) : m_rt(_rt), m_crt(_crt), m_textFormat(_textFormat), m_blackBrush(_black), m_colorBrush1(_color1), m_colorBrush2(_color2)
 {
     Init();
@@ -35,6 +36,7 @@ void GameView::Init()
 	m_alertText = new AlertText(332,361,130,70,false);
 	m_map = new Map();
 	m_money = new Money();
+	m_marker = new Marker();
 }
 
 void GameView::Update(int _deltaTick)
@@ -79,6 +81,7 @@ void GameView::Render()
 	m_dice->Render();
 	m_money->Render();
 	m_alertText->Render();
+	m_marker->Render();
 	LeaveCriticalSection(&m_gameLock);
 
 }
@@ -103,6 +106,7 @@ void GameView::Clean()
 	delete m_alertText;
 	delete m_map;
 	delete m_money;
+	delete m_marker;
 
 	m_uiVector[GAMEVIEW_GAMEUSER1] = nullptr;
 	m_uiVector[GAMEVIEW_GAMEUSER2] = nullptr;
@@ -113,6 +117,7 @@ void GameView::Clean()
 	m_alertText = nullptr;
 	m_map	 = nullptr;
 	m_money	 = nullptr;
+	m_marker = nullptr;
 
 	m_uiVector[GAMEVIEW_GAMEUSER1] = new UserInfo(0, 0, 250, 75, false, m_blackBrush, m_textFormat, 0);
 	m_uiVector[GAMEVIEW_GAMEUSER2] = new UserInfo2(550, 0, 250, 75, false, m_blackBrush, m_textFormat, 1);
@@ -123,6 +128,7 @@ void GameView::Clean()
 	m_map = new Map();
 	m_money = new Money();
 	m_uiVector[GAMEVIEW_GAMEDICEBTN] = new DiceBtn(350, 342, 96, 81, false);
+	m_marker = new Marker();
 }
 
 void GameView::MouseMoveEvent(int _x, int _y)
@@ -192,6 +198,7 @@ void GameView::GameUserAsync(std::vector<User>& _data)
 
 void GameView::TurnSend(int _playerIdx)
 {
+	m_marker->SetVisiable(false);
 	m_dice->Hold(_playerIdx);
 	for (int i = 0; i < 4; i++)
 	{
@@ -225,10 +232,12 @@ void GameView::PlayerMove(char* _data)
 	int playerIndex = *(int*)(_data + sizeof(Region));
 	bool salry = *(bool*)(_data + sizeof(Region) + sizeof(int));
 	int playerMoney = *(int*)(_data + sizeof(Region) + sizeof(int) + sizeof(bool));
-
+	m_marker->SetPos(dest._mapIndex);
+	m_marker->SetVisiable(true);
 	static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex])->SetMoney(playerMoney);
 	m_players[playerIndex]->Move(dest);
 	m_alertText->SetState(AlertTextState::AlertTextState_NONE);
+
 }
 
 void GameView::GameEnd(int _data)

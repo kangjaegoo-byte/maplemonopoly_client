@@ -30,6 +30,7 @@ private:
 	CRITICAL_SECTION				m_gameLock;
 	bool m_change = false;
 	bool m_viewChange = false;
+	class Marker* m_marker;
 public:
 	GameView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, IDWriteTextFormat* _textFormat, ID2D1SolidColorBrush* _black, ID2D1SolidColorBrush* _color1, ID2D1SolidColorBrush* _color2);
 	~GameView();

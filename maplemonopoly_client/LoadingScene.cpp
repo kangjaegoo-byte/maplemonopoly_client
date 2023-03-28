@@ -228,6 +228,8 @@ unsigned int _stdcall LaodProc(void* Args)
 		if (wcscmp(filename, L"alertText.png") == 0)
 			ResourceManager::GetInstance()->Put(GAME_ALERT_TEXT_BITMAP, bitmap);
 
+		if (wcscmp(filename, L"marker.png") == 0)
+			ResourceManager::GetInstance()->Put(GAME_MARKER_BITMAP, bitmap);
 
 		lac->SetLoadFilename(filename);
 		lac->Add(percent);
@@ -412,6 +414,9 @@ unsigned int _stdcall LaodProc(void* Args)
 			ResourceManager::GetInstance()->Put(GAME_DICE_BTN_PRESS_SPRITE, reinterpret_cast<Sprite*>(ResourceManager::GetInstance()->LoadBinaryData(loadPath)));
 
 		if (wcscmp(filename, L"buttonPressUp.spr") == 0)
+			ResourceManager::GetInstance()->Put(GAME_DICE_BTN_PRESS_UP_SPRITE, reinterpret_cast<Sprite*>(ResourceManager::GetInstance()->LoadBinaryData(loadPath)));
+
+		if (wcscmp(filename, L"marker.spr") == 0)
 			ResourceManager::GetInstance()->Put(GAME_DICE_BTN_PRESS_UP_SPRITE, reinterpret_cast<Sprite*>(ResourceManager::GetInstance()->LoadBinaryData(loadPath)));
 
 		lac->SetLoadFilename(filename);
