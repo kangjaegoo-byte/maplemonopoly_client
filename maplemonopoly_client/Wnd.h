@@ -7,7 +7,6 @@ protected:
 	HWND m_hwnd;
 	int	m_width;
 	int	m_height;
-
 public:
 	Wnd();
 	~Wnd();
