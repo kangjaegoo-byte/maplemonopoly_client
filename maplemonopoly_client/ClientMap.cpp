@@ -38,7 +38,7 @@ ClientMap::ClientMap()
 	m_maps[20] = ClientMapData{ 521 ,195,true,0,0 };		// 화학마크
 	m_maps[21] = ClientMapData{ 558 ,222,true,594,195 };	// 방송국
 	m_maps[22] = ClientMapData{ 593 ,248,true,629,221 };		// 공항
-	m_maps[23] = ClientMapData{ 630 ,274,true,0,0 };			// 풍력발전소
+	m_maps[23] = ClientMapData{ 630 ,274,true,667,248 };			// 풍력발전소
 
 	m_maps[24] = ClientMapData{ 709 ,288,false,0,0 };		// 좀비레이스 180 왼쪽방향으로 회전
 	m_maps[25] = ClientMapData{ 674 ,340,false,637,310 };	// 호텔
