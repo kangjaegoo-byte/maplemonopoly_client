@@ -374,7 +374,9 @@ void GameView::PlayerDead(char* _data)
 	delete m_players[playerIndex];
 	m_players[playerIndex] = nullptr;
 
-	m_alertText->SetMoney(otherMoney);
+	int money = ::abs(otherMoney - m_players[otherIndex]->GetMoney());
+
+	m_alertText->SetMoney(money);
 
 	m_money->MoneyPassCost(playerIndex, otherIndex);
 	
