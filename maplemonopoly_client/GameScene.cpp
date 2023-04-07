@@ -13,6 +13,10 @@ GameScene::GameScene() : Scene(GAME_SCENE)
 GameScene::~GameScene()
 {
 	Clean();
+
+	for (int i = 0; i < GAME_VIEW_COUNT; i++)
+		if (m_viewVector[i])
+			delete m_viewVector[i];
 }
 
 void GameScene::Init()
@@ -120,6 +124,12 @@ void GameScene::GameUserAsync(std::vector<User>& _data)
 {
 	m_zindex = 0;
 	static_cast<GameView*>(m_viewVector[GAME_VIEW])->GameUserAsync(_data);
+}
+
+void GameScene::GameUserAsync(char* _buffer)
+{
+	m_zindex = 0;
+	static_cast<GameView*>(m_viewVector[GAME_VIEW])->GameUserAsync(_buffer);
 }
 
 void GameScene::TurnSend(int _playerIdx)

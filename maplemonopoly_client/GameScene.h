@@ -39,6 +39,7 @@ public:
 
 	void GameUserNumber(int _dataPtr);
 	void GameUserAsync(std::vector<class User>& _data);
+	void GameUserAsync(char* _buffer);
 	void TurnSend(int _playerIdx);
 	void DiceDropResult(DiceData* _diceData);
 	void PlayerMove(char* _data);

@@ -42,6 +42,7 @@ private:
 	int								m_animationUpdateTick = 0;
 	CRITICAL_SECTION				m_wroomLock;
 	bool m_lobbyRoomChange = false;
+	class User* m_users[4] = { nullptr, nullptr, nullptr, nullptr };
 
 public:
 	WRoomView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, IDWriteTextFormat* _textFormat, IDWriteTextFormat* _staticTextFormat, ID2D1SolidColorBrush* _brush);
@@ -59,8 +60,18 @@ public:
 	virtual void	CharEvent(WPARAM _key) override;
 	virtual ViewType ChangeView() override;
 
-	void			WRoomUserListAsync(std::vector<User>& _data);
-	void			WRoomTitleAsync(WCHAR* _dataPtr, int _dataSize);
+
 	void			WRoomChatMsgRecv(WCHAR* _dataPtr, int _dataSize);
+	void			PlayerWRoomExit(User* _user);
+	void			PlayerWRoomEnter(User* _user);
+	void			PlayerWRoomEnter(char* buffer);
+	void			PlayerWRoomOtherEnter(char* buffer);
+	void			PlayerReady(char* _buffer);
+	void			PlayerPickChange(char* _buffer);
+	void			WRoomTitleAsync(WCHAR* _dataPtr, int _dataSize);
+	void			WRoomChat(char* buffer);
+	void			WRoomAsync(char* buffer);
+	void			WRoomPickChange(char* buffer);
+	void			WRoomReady(char* buffer);
 };
 

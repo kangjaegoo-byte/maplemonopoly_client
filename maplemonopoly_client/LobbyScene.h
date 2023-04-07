@@ -33,12 +33,23 @@ public:
 public:
 	void			LobbyUserListDataAsync(const std::vector<class User>& _data);
 	void			LobbyRoomListDataAsync(const std::vector<class Room>& _data);
-	void			LobbyChatMsgRecv(WCHAR* _text, int _size);
+	void			LobbyChatMsgRecv(char* buffer);
 	void			LobbyUsernameAsync(WCHAR* _text, int _size);
 
-	void			WRoomUserListAsync(std::vector<class User>& _data);
-	void			WRoomTitleAsync(WCHAR* _text, int _size);
 	void			WRoomChat(WCHAR* _text, int _size);
+	void			WRoomChat(char* buffer);
 	void			EnterGame() { m_change = true; };
-};
+	void			PlayerWRoomEnter(User* _user);
+	void			PlayerWRoomEnter(char* buffer);
+	void			PlayerWRoomExit(User* _user);
+	void		    PlayerReady(char* buffer);
+	void		    PlayerPickChange(char* buffer);
+	void		    WRoomTitleAsync(WCHAR* _dataPtr, int _dataSize);
+	void			LobbyAsync(char* buffer);
+	void			PlayerWRoomOtherEnter(char* buffer);
+	void			WRoomAsync(char* buffer);
+	void			WRoomPickChange(char* buffer);
+	void			WRoomReady(char* buffer);
 
+}
+;

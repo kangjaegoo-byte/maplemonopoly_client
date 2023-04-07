@@ -59,6 +59,7 @@ public:
 	void					GameOtherBuyResponse(char* _dataPtr);
 	void					PlayerDead(char* _data);
 	bool					GameEnd();
+	void GameUserAsync(char* _buffer);
 
 };
 

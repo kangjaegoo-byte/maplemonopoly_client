@@ -20,7 +20,7 @@ private:
 	class Sprite* m_sprite = nullptr;
 	class StaticText* m_text = nullptr;
 	class StaticText* m_title = nullptr;
-	Requesttype m_type;
+	int m_type;
 	int			m_playerIndex;
 	bool        m_changed = false;
 	CRITICAL_SECTION				m_gameLock;

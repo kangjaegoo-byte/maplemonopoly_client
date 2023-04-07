@@ -57,111 +57,148 @@ void GameService::SceneChange()
 
 void GameService::Recv(char* _buffer)
 {
-	WORD* size = (WORD*)_buffer;
-	int dataSize = *size - PACKET_HEADER_SIZE;
-	size++;
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+	WORD size = header->size;
+	WORD commond = header->id;
 
-	WORD* cnt = (WORD*)size;
-	int dataCnt = *cnt;
-	cnt++;
-
-	WORD* type = (WORD*)cnt;
-	int responseType = *type;
-	type++;
-
-	char* dataPtr = (char*)type;
-
-	switch (responseType)
+	switch (commond)
 	{
-	case ASYNC_LOBBY_USERLIST_RESPONSE:
-		LobbyUserListAsync(dataPtr, dataCnt);
+	case PKT_C_LOBBYCHAT:
+		LobbyChatMsgRecv(_buffer);
 		break;
 
-	case PROCESS_LOBBY_CHAT_RESPONSE:
-		LobbyChatMsgRecv((WCHAR*)dataPtr, dataSize);
+	case PKT_C_LOBBYASYNC:
+		LobbyAsync(_buffer);
 		break;
 
-	case ASYNC_LOBBY_ROOMLIST_RESPONSE:
-		LobbyRoomListAsync(dataPtr, dataCnt);
+	case PKT_C_WROOM_ENTEROTHERUSER:
+		PlayerWRoomOtherEnter(_buffer);
 		break;
 
-	case ASYNC_LOBBY_USERNAME_RESPONSE:
-		LobbyUsernameAsync((WCHAR*)dataPtr, dataSize);
+	case PKT_C_WROOM_ENTERUSER:
+		PlayerWRoomEnter(_buffer);
 		break;
 
-	case ASYNC_WROOM_USER_RESPONSE:
-		WRoomUserListAsync(dataPtr, dataCnt);
+	case PKT_C_WROOMCHAT:
+		WRoomChat(_buffer);
 		break;
 
-	case ASYNC_WROOM_TITLE_RESPONSE:
-		WRoomTitleAsync((WCHAR*)dataPtr, dataSize);
+	case PKT_C_WROOM_ASYNCUSERLIST:
+		WRoomAsync(_buffer);
 		break;
 
-	case PROCESS_WROOM_CHAT_RESPONSE:
-		WRoomChat((WCHAR*)dataPtr, dataSize);
+	case PKT_C_PICKCHANGE:
+		WRoomPickChange(_buffer);
 		break;
-		
-	case PROCESS_GAME_ENTER_RESPONSE:
+
+	case PKT_C_READY:
+		WRoomReady(_buffer);
+		break;
+
+	case PKT_C_ENTERGAME:
 		EnterGame();
 		break;
 
-	case PROCESS_GAME_USER_ASYNC_RESPONSE:
-		GameUserAsync(dataPtr, dataCnt);
+	case PKT_C_GAMEINIT:
+		GameUserAsync(_buffer);
 		break;
 
-	case PROCESS_GAME_USER_NUMBER_RESPONSE:
-		GameUserNumber(static_cast<int>(*dataPtr));
-		break;
-
-	case PROCESS_GAME_TURN_SEND_RESPONSE:
-		TurnSend(static_cast<int>(*dataPtr));
-		break;
-
-	case PROCESS_GAME_DICE_RESPONSE:
-		DiceDropResult(reinterpret_cast<DiceData*>(dataPtr));
-		break;
-	
-	case PROCESS_GAME_MOVE_RESPONSE:
-		PlayerMove(dataPtr);
-		break;
-
-	case PROCESS_GAME_BUY_REGION_MODAL_RESPONSE:
-		GameBuyRegion(reinterpret_cast<Region*>(dataPtr));
-		break;
-
-		// 지역구매 
-	case PROCESS_GAME_BUY_REGION_MODAL_PROCESS_RESPONSE:
-		GameBuyRegionModalProcessResponse(dataPtr);
-		break;
-
-		// 다른사람 지역 구매
-	case PROCESS_GAME_BUY_REGION_OTHER_REGION_RESPONSE:
-		GameOtherBuyResponse(dataPtr);
-		break;
-
-		// 통행료
-	case PROCESS_GAME_MONEY_PASS_RESPONSE:
-		MoneyPassCost(dataPtr);
-		break;
-
-		// 다른사람 지역 살건지 모달 
-	case PROCESS_GAME_BUY_REGION_OTHER_MODAL_RESPONSE:
-		GameBuyRegionModalOtherProcessResponseEx(dataPtr);
-		break;
-
-	case PROCESS_GAME_USER_DEAD:
-		PlayerDead(dataPtr);
-		break;
-
-	case PROCESS_GAME_END_RESPONSE:
-		GameEnd(static_cast<int>(*dataPtr));
-		break;
-
-	case PROCESS_PLAYER_DISCONNECT:
-		PlayerDisconnect(static_cast<int>(*dataPtr));
+	case PKT_C_GAMETURNSEND:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		int turn = *(int*)(header + 1);
+		TurnSend(turn);
 		break;
 	}
 
+
+	case PKT_C_TURNINFO:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		int turn = *(int*)(header + 1);
+		GameUserNumber(turn);
+		break;
+	}
+
+
+	case PKT_C_DICEDROP:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		char* readPos = (char*)(header + 1);
+		DiceData* dd = (DiceData*)(readPos);
+		DiceDropResult(dd);
+		break;
+	}
+
+	
+	case PKT_C_DICEDROPEND:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		char* readPos = (char*)(header + 1);
+		PlayerMove(readPos);
+		break;
+	}
+
+
+	case PKT_C_BUYREGION:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		Region* readPos = (Region*)(header + 1);
+		GameBuyRegion(readPos);
+		break;
+	}
+
+
+	case PKT_C_BUYREGIONRESPONSE:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		char* readPos = (char*)(header + 1);
+		GameBuyRegionModalProcessResponse(readPos);
+		break;
+	}
+
+
+	case PKT_C_BUYOTHERREGION:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		char* readPos = (char*)(header + 1);
+		GameBuyRegionModalOtherProcessResponseEx(readPos);
+		break;
+	}
+
+	case PKT_C_PASSCOST:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		char* readPos = (char*)(header + 1);
+		MoneyPassCost(readPos);
+		break;
+	}
+
+	case PKT_C_PLAYERDEAD:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		char* readPos = (char*)(header + 1);
+		PlayerDead(readPos);
+		break;
+	}
+
+	case PKT_C_GAMEEND:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		int readPos = *(int*)(header + 1);
+		GameEnd(readPos);
+		break;
+	}
+
+	case PKT_C_DISCONNECT:
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+		int readPos = *(int*)(header + 1);
+		PlayerDisconnect(readPos);
+		break;
+	}	
+
+	}
 }
 
 void GameService::LobbyUserListAsync(char* _data, int _cnt)
@@ -196,14 +233,14 @@ void GameService::LobbyRoomListAsync(char* _data, int _cnt)
 	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->LobbyRoomListDataAsync(rooms);
 }
 
-void GameService::LobbyChatMsgRecv(WCHAR* _text, int _size)
+void GameService::LobbyChatMsgRecv(char* buffer)
 {
 	SceneType now = SceneManager::GetInstance()->GetNowScene();
 
 	if (now != LOBBY_SCENE)
 		return;
 
-	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->LobbyChatMsgRecv(_text, _size);
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->LobbyChatMsgRecv(buffer);
 }
 
 void GameService::LobbyUsernameAsync(WCHAR* _text, int _size)
@@ -216,31 +253,6 @@ void GameService::LobbyUsernameAsync(WCHAR* _text, int _size)
 	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->LobbyUsernameAsync(_text, _size);
 }
 
-void GameService::WRoomUserListAsync(char* _data, int _cnt)
-{
-	SceneType now = SceneManager::GetInstance()->GetNowScene();
-
-	if (now != LOBBY_SCENE)
-		return;
-
-	std::vector<User> data;
-	data.resize(_cnt);
-
-	memcpy(&data[0], _data, _cnt * sizeof(User));
-
-	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->WRoomUserListAsync(data);
-}
-
-void GameService::WRoomTitleAsync(WCHAR* _text, int _size)
-{
-	SceneType now = SceneManager::GetInstance()->GetNowScene();
-
-	if (now != LOBBY_SCENE)
-		return;
-
-	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->WRoomTitleAsync(_text, _size);
-}
-
 void GameService::WRoomChat(WCHAR* _text, int _size)
 {
 	SceneType now = SceneManager::GetInstance()->GetNowScene();
@@ -249,6 +261,16 @@ void GameService::WRoomChat(WCHAR* _text, int _size)
 		return;
 
 	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->WRoomChat(_text, _size);
+}
+
+void GameService::WRoomChat(char* buffer)
+{
+	SceneType now = SceneManager::GetInstance()->GetNowScene();
+
+	if (now != LOBBY_SCENE)
+		return;
+
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->WRoomChat(buffer);
 }
 
 void GameService::EnterGame()
@@ -271,6 +293,11 @@ void GameService::GameUserAsync(char* _data, int _cnt)
 
 	memcpy(&data[0], _data, _cnt * sizeof(User));
 	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->GameUserAsync(data);
+}
+
+void GameService::GameUserAsync(char* _buffer)
+{
+	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->GameUserAsync(_buffer);
 }
 
 void GameService::GameUserNumber(int _idx)
@@ -332,4 +359,60 @@ void GameService::GameEnd(int _data)
 void GameService::PlayerDisconnect(int _playerIndex)
 {
 	static_cast<GameScene*>(SceneManager::GetInstance()->GetScene(GAME_SCENE))->PlayerDisconnect(_playerIndex);
+}
+
+void GameService::PlayerWRoomEnter(User* _user)
+{
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->PlayerWRoomEnter(_user);
+}
+
+void GameService::PlayerWRoomEnter(char* buffer)
+{
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->PlayerWRoomEnter(buffer);
+}
+
+void GameService::PlayerWRoomOtherEnter(char* buffer)
+{
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->PlayerWRoomOtherEnter(buffer);
+}
+
+void GameService::PlayerWRoomExit(User* _user)
+{
+
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->PlayerWRoomExit(_user);
+}
+
+void GameService::PlayerReady(char* buffer)
+{
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->PlayerReady(buffer);
+}
+
+void GameService::PlayerPickChange(char* buffer)
+{
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->PlayerPickChange(buffer);
+}
+
+void GameService::WRoomTitleAsync(WCHAR* _dataPtr, int _dataSize)
+{
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->WRoomTitleAsync(_dataPtr, _dataSize);
+}
+
+void GameService::LobbyAsync(char* buffer)
+{
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->LobbyAsync(buffer);
+}
+
+void GameService::WRoomAsync(char* buffer)
+{
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->WRoomAsync(buffer);
+}
+
+void GameService::WRoomPickChange(char* buffer)
+{
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->WRoomPickChange(buffer);
+}
+
+void GameService::WRoomReady(char* buffer)
+{
+	static_cast<LobbyScene*>(SceneManager::GetInstance()->GetScene(LOBBY_SCENE))->WRoomReady(buffer);
 }

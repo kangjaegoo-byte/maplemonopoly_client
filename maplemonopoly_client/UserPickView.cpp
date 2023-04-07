@@ -88,7 +88,9 @@ bool UserPickView::ISFocus(int _x, int _y)
 void UserPickView::Refresh(Pick _pick)
 {
 	EnterCriticalSection(&m_pickViewLock);
+	if (m_pick != _pick)
+		m_clip = 0;
+
 	m_pick = _pick;
-	m_clip = 0;
 	LeaveCriticalSection(&m_pickViewLock);
 }

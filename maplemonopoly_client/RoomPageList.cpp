@@ -117,9 +117,14 @@ bool RoomPageList::EnterRoomEvent(int _index)
 	if (enterRoom.GetjoinCount() >= 4)
 		return false;
 
-	int roomSq = enterRoom.GetSq();
 
-	Network::GetInstance()->SendPacket((char*)&roomSq, PROCESS_ENTER_ROOM_REQUEST, sizeof(int), 0);
+	char buffer[256];
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+	*(int*)(header + 1) = enterRoom.GetSq();
+	header->size = 4 + 4;
+	header->id = PKT_S_ENTERROOM;
+
+	Network::GetInstance()->Send(buffer, header->size);
 	LeaveCriticalSection(&m_roomListLock);
 	return true;
 }

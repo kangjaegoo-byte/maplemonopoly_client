@@ -49,7 +49,13 @@ void Dice::Update(int _tick)
 			char buffer[256];
 			memcpy(buffer, &m_sum, sizeof(int));
 			memcpy(buffer + sizeof(int), &m_playerIndex, sizeof(int));
-			Network::GetInstance()->SendPacket(buffer, PROCESS_GAME_DICE_REUSLT_REQUEST, 8, 1);
+
+			PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+			*(int*)(header + 1) = m_sum;
+			*(int*)((int*)(header + 1) + 1) = m_playerIndex;
+			header->id = PKT_S_DICEDROPEND;
+			header->size = 12;
+			Network::GetInstance()->Send(buffer, header->size);
 			m_myTurn = false;
 		}
 	}

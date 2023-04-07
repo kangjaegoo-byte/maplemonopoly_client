@@ -87,3 +87,8 @@ void Network::SendPacket(char* _buffer, int _type, int _size, int _dataCnt)
 		memcpy(packet._data, _buffer, _size);
 	::send(m_connectSocket, (char*)&packet, packet._size, 0);
 }
+
+void Network::Send(char* buffer, int size)
+{
+	::send(m_connectSocket, buffer, size, 0);
+}

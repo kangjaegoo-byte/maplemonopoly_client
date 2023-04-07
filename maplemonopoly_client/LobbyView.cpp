@@ -11,6 +11,7 @@
 #include "ChattingBox.h"
 #include "UserPageList.h"
 #include "RoomPageList.h"
+#include "Room.h"
 D2D1_RECT_F roomListRect[10] = { D2D1::RectF(15, 125, 502, 25), D2D1::RectF(15, 151,502, 25), D2D1::RectF(15, 177, 502, 25), D2D1::RectF(15, 206, 502, 25), D2D1::RectF(15, 232, 502, 25), D2D1::RectF(15, 259, 502, 25), D2D1::RectF(15, 286, 502, 25), D2D1::RectF(15, 313, 502, 25), D2D1::RectF(15, 341, 502, 25), D2D1::RectF(15, 367, 502, 25) };
 
 LobbyView::LobbyView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, IDWriteTextFormat* _textFormat, IDWriteTextFormat* _boldTextFormat, ID2D1SolidColorBrush* _black, ID2D1SolidColorBrush* _blue, ID2D1SolidColorBrush* _red) : m_rt(_rt), m_crt(_crt), m_textFormat(_textFormat), m_blackBrush(_black), m_blueBrush(_blue), m_redBrush(_red), m_boldTextAliginNormalForamt(_boldTextFormat)
@@ -20,7 +21,9 @@ LobbyView::LobbyView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, 
 
 LobbyView::~LobbyView()
 {
-	Clean();
+	for (int zindex = 0; zindex < LobbyView_UICOUNT; zindex++)
+		if (m_uiVector[zindex])
+			delete m_uiVector[zindex];
 }
 
 void LobbyView::Init()
@@ -46,7 +49,13 @@ void LobbyView::Update(int _deltaTick)
 	if (m_sumTick < passTick)
 		return;
 
-	Network::GetInstance()->SendPacket(nullptr, PROCESS_ASYNC_LOBBY_REQUEST, 0, 0);
+	char buffer[256] = {};
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+	header->id = PKT_S_LOBBYASYNC;
+	header->size = 4;
+
+	Network::GetInstance()->Send(buffer, header->size);
+	// Network::GetInstance()->SendPacket(nullptr, PROCESS_ASYNC_LOBBY_REQUEST, 0, 0);
 
 	m_sumTick = 0;
 }
@@ -97,7 +106,15 @@ void LobbyView::CharEvent(WPARAM _key)
 			if (zindex == LobbyView_CHATINPUT && _key == 13 /* ENTER */)
 			{
 				WCHAR* text = static_cast<InputEditor*>(m_uiVector[zindex])->GetText();
-				Network::GetInstance()->SendPacket((char*)text, PROCESS_LOBBY_CHAT_REQUEST, wcslen(text) * sizeof(WCHAR), 1);
+				char buffer[256] = {};
+				PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+				header->id = PKT_S_LOBBYCHAT;
+				int chatSize = wcslen(text) * sizeof(WCHAR);
+				*(int*)(header + 1) = chatSize;
+				memcpy(((int*)(header + 1) + 1), text, chatSize);
+				header->size = 4 + 4 + chatSize;
+				Network::GetInstance()->Send(buffer, header->size);
+				// Network::GetInstance()->SendPacket((char*)text, PROCESS_LOBBY_CHAT_REQUEST, wcslen(text) * sizeof(WCHAR), 1);
 				static_cast<InputEditor*>(m_uiVector[zindex])->TextInit();
 			}
 			else
@@ -160,12 +177,72 @@ void LobbyView::LobbyRoomListDataAsync(const std::vector<class Room>& _data)
 	static_cast<RoomPageList*>(m_uiVector[LobbyView_ROOMLIST])->AsyncData(_data);
 }
 
-void LobbyView::LobbyChatMsgRecv(WCHAR* _text, int _size)
+void LobbyView::LobbyChatMsgRecv(char* buffer)
 {
-	static_cast<ChattingBox*>(m_uiVector[LobbyView_CHATLIST])->Add((char*)_text, _size);
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+	int* strSize = (int*)(header + 1);
+	char* dataPtr = reinterpret_cast<char*>(strSize + 1);
+	static_cast<ChattingBox*>(m_uiVector[LobbyView_CHATLIST])->Add(dataPtr, *strSize);
 }
 
 void LobbyView::LobbyUsernameAsync(WCHAR* _text, int _size)
 {
 	memcpy(m_username, _text, _size);
+}
+
+void LobbyView::LobbyAsync(char* buffer)
+{
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+	int playerCount = *(int*)(header + 1);
+	
+	std::vector<User> userVector;
+	char* temp = (char*)((int*)(header + 1) + 1);
+	int* offSet = (int*)(header + 1) + 1;
+	for (int i = 0; i < playerCount; i++)
+	{
+		int* locationPtr = offSet;							offSet += 1;
+		int* usernameSizePtr = offSet;						offSet += 1;
+		WCHAR* username = (WCHAR*)offSet;					temp = (char*)offSet + (*usernameSizePtr);
+
+		User user;
+		user.SetLocation(static_cast<Location>(*locationPtr));
+		user.SetUsername(username, *usernameSizePtr);
+		userVector.push_back(user);
+
+		offSet = (int*)temp;
+	}
+
+	static_cast<UserPageList*>(m_uiVector[LobbyView_USERLIST])->AsyncData(userVector);
+
+	// temp 부터 읽기 시작 ~ 
+	int usernameSize = *(int*)temp;		temp += 4;
+	WCHAR* username = (WCHAR*)temp;		temp += usernameSize;
+	
+	// 이제 방을 읽어야지
+	std::vector<Room> roomVector;
+	int* roomCount = (int*)temp;		temp += 4;
+
+	for (int i = 0; i < *roomCount; i++) 
+	{
+		int roomSq = *(int*)temp;													temp += 4;
+		Roomstatus roomStatus = static_cast<Roomstatus>(*(int*)temp);				temp += 4;
+		int roomPlayerCount = *(int*)temp;											temp += 4;
+		
+		int roomTileSize = *(int*)temp;												temp += 4;
+		WCHAR* title = (WCHAR*)temp;												temp += roomTileSize;
+
+		int	regByStrSize = *(int*)temp;												temp += 4;
+		WCHAR* regBy = (WCHAR*)temp;												temp += regByStrSize;
+
+		Room room;
+		room.SetTitle(title, roomTileSize);
+		room.SetRegBy(regBy, regByStrSize);
+		room.SetJoinCount(roomPlayerCount);
+		room.SetRoomSq(roomSq);
+		roomVector.push_back(room);
+	}
+
+	static_cast<RoomPageList*>(m_uiVector[LobbyView_ROOMLIST])->AsyncData(roomVector);
+
+	LobbyUsernameAsync(username,usernameSize);
 }

@@ -52,8 +52,19 @@ void LoginScene::Update(int _deltaTick)
 				reinterpret_cast<AlertModal*> (m_uiVector[LOGIN_ALERTMODAL])->Show();
 			else
 			{
-				WCHAR* username = loginText->GetText();
-				Network::GetInstance()->SendPacket((char*)username, PROCESS_LOGIN_REQUEST, wcslen(username) * sizeof(WCHAR), 1);
+ 				WCHAR* username = loginText->GetText();
+				// Network::GetInstance()->SendPacket((char*)username, PROCESS_LOGIN_REQUEST, wcslen(username) * sizeof(WCHAR), 1);
+				
+				char buffer[256] = {};
+				
+				PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+				*(int*)(header + 1) = wcslen(username) * sizeof(WCHAR);
+				memcpy(  ((int*)(header + 1) + 1) , username,wcslen(username) * sizeof(WCHAR));
+				
+				(* header).id = PKT_S_LOGIN;
+				(*header).size = 4 + 4 + (wcslen(username) * sizeof(WCHAR));
+
+				Network::GetInstance()->Send(buffer, header->size);
 				m_change = true;
 			}
 		}

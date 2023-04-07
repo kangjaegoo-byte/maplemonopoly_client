@@ -158,7 +158,12 @@ void GameView::MouseClickUpEnvet(int _x, int _y)
 	if (m_myTurn && m_uiVector[GAMEVIEW_GAMEDICEBTN]->ISFocus(_x, _y))
 	{
 		static_cast<DiceBtn*>(m_uiVector[GAMEVIEW_GAMEDICEBTN])->MouseUp();
-		Network::GetInstance()->SendPacket((char*)&m_playerIndex, PROCESS_GAME_DICE_REQUEST, sizeof(int), 1);
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->size = 8;
+		header->id = PKT_S_DICEDROP;
+		*(int*)(header + 1) = m_playerIndex;
+		Network::GetInstance()->Send(buffer, header->size);
 		m_myTurn = false;
 	}
 }
@@ -313,7 +318,13 @@ void GameView::GameBuyRegionModalProcessResponse(char* _dataPtr)
 	static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + playerIndex])->SetMoney(money);
 
 	if (m_playerIndex == playerIndex)
-		Network::GetInstance()->SendPacket(nullptr, PROCESS_GAME_NEXTTURN_REQUEST, 0, 0);
+	{
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->size = 4;
+		header->id = PKT_S_PASSTURN;
+		Network::GetInstance()->Send(buffer, header->size);
+	}
 }
 
 void GameView::MoneyPassCost(char* _dataPtr)
@@ -360,7 +371,13 @@ void GameView::GameOtherBuyResponse(char* _dataPtr)
 		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + otherIdx])->SetMoney(otherMoney);
 
 	if (m_playerIndex == playerIndex)
-		Network::GetInstance()->SendPacket(nullptr, PROCESS_GAME_NEXTTURN_REQUEST, 0, 0);
+	{
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->size = 4;
+		header->id = PKT_S_PASSTURN;
+		Network::GetInstance()->Send(buffer, header->size);
+	}
 }
 
 void GameView::PlayerDead(char* _data)
@@ -389,7 +406,14 @@ void GameView::PlayerDead(char* _data)
 		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + otherIndex])->SetMoney(otherMoney);
 
 	if (m_playerIndex == playerIndex)
-		Network::GetInstance()->SendPacket((char*)& playerIndex, PROCESS_GAME_USER_DEAD_REQUEST, sizeof(int), 0);
+	{
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->size = 4;
+		header->id = PKT_S_PLAYERDEAD;
+		*(int*)(header + 1) = m_playerIndex;
+		Network::GetInstance()->Send(buffer, header->size);
+	}
 
 
 	LeaveCriticalSection(&m_gameLock);
@@ -402,4 +426,30 @@ bool GameView::GameEnd()
 	m_change = false;
 
 	return ret;
+}
+
+void GameView::GameUserAsync(char* _buffer)
+{
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(_buffer);
+
+	char* readPos = (char*)(header + 1);
+
+	int playerCount = *(int*)(readPos);			readPos += 4;
+
+	for (int i = 0; i < playerCount; i++) 
+	{
+		int pick = *(int*)(readPos);			readPos += 4;
+		int order = *(int*)(readPos);			readPos += 4;
+		int usernameSize = *(int*)(readPos);	readPos += 4;
+		WCHAR* username = (WCHAR*)(readPos);	readPos += usernameSize;
+
+
+		User user;
+		user.SetPick((Pick)pick);
+		user.SetOrder(order);
+		user.SetUsername(username, usernameSize);
+
+		static_cast<UserInfo*>(m_uiVector[GAMEVIEW_GAMEUSER1 + order])->Init(user);
+		m_players[order] = new Player(user.GetPick(), 100, 0, 402, 522);
+	}
 }

@@ -10,6 +10,8 @@ GameEndView::GameEndView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _c
 GameEndView::~GameEndView()
 {
 	Clean();
+	if (m_gameEndModal)
+		delete m_gameEndModal;
 }
 void GameEndView::Init()
 {

@@ -90,7 +90,12 @@ void Player::Update(int _tick, int _playerIndex)
 			if (m_myPlayer)
 			{
 				// 1) 유저가 해당 지역에 도착했다고 서버에 알려준다.
-				Network::GetInstance()->SendPacket((char*)&_playerIndex, PROCESS_GAME_MOVE_COMPLETE_REQUEST, sizeof(int), 0);
+				char buffer[256];
+				PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+				*(int*)(header + 1) = _playerIndex;
+				header->size = 8;
+				header->id = PKT_S_PLAYERMOVEEND;
+				Network::GetInstance()->Send(buffer,header->size);
 			}
 		}
 		break;

@@ -18,13 +18,17 @@ WRoomView::WRoomView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, 
 
 WRoomView::~WRoomView()
 {
-	Clean();
+	for (int zindex = 0; zindex < WROOM_UICOUNT; zindex++)
+		if (m_uiVector[zindex])
+			delete m_uiVector[zindex];
+	DeleteCriticalSection(&m_wroomLock);
 }
 
 void WRoomView::Init()
 {
 	InitializeCriticalSection(&m_wroomLock);
-	m_uiVector.resize(WROOM_UICOUNT, nullptr);
+	m_uiVector.resize(WROOM_UICOUNT, nullptr);	
+
 	m_uiVector[WROOM_EXIT_BTN] = new Button(749, 572, 26, 19, false);
 	m_uiVector[WROOM_TITLE_STATICTEXT] = new StaticText(27, 61, 274, 20, false, m_blackBrush, m_staticTextFormat);
 	m_uiVector[WROOM_USERNAME1_STATICTEXT] = new StaticText(31, 214, 79, 14, false, m_blackBrush, m_staticTextFormat);
@@ -55,12 +59,6 @@ void WRoomView::Update(int _deltaTick)
 	m_sumTick += _deltaTick;
 	m_animationUpdateTick += _deltaTick;
 
-	if (m_sumTick >= passTick)
-	{
-		Network::GetInstance()->SendPacket(nullptr, PROCESS_ASYNC_WROOM_REQUEST, 0, 0);
-		m_sumTick = 0;
-	}
-
 	if (m_animationUpdateTick >= animationPassTick)
 	{
 		for (int i = 0; i < 4; i++)
@@ -71,6 +69,22 @@ void WRoomView::Update(int _deltaTick)
 		}
 	}
 
+	{
+		for (int i = 0; i < 4; i++) 
+		{
+			EnterCriticalSection(&m_wroomLock);
+			if (m_users[i])
+			{
+				if (i != 0)
+					static_cast<Ready*>(m_uiVector[i + 15])->SetReady(m_users[i]->GetReady());
+				static_cast<StaticText*>(m_uiVector[WROOM_USERNAME1_STATICTEXT + i])->SetText(m_users[i]->GetUsername(), wcslen(m_users[i]->GetUsername()) * 2);
+				static_cast<UserPickView*>(m_uiVector[WROOM_USER1_PICKVIEW + i])->Refresh(m_users[i]->GetPick());
+			}
+			LeaveCriticalSection(&m_wroomLock);
+		}
+	}
+
+
 	Button* exitBtn = static_cast<Button*> (m_uiVector[WROOM_EXIT_BTN]);
 	Button* honyPick = static_cast<Button*> (m_uiVector[WROOM_USERPICK1_BTN]);
 	Button* orangePick = static_cast<Button*> (m_uiVector[WROOM_USERPICK2_BTN]);
@@ -79,28 +93,62 @@ void WRoomView::Update(int _deltaTick)
 
 	if (exitBtn->GetClicked())
 	{
-		Network::GetInstance()->SendPacket(nullptr, PROCESS_WROOM_EXIT_REQUEST,  0, 0);
+		char buffer[256];
+
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = PKT_S_EXITWROOM;
+		header->size = 4;
+		Network::GetInstance()->Send(buffer, header->size);
+		
 		m_lobbyRoomChange = true;
 		static_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->ClearChat();
+
+		for (int i = 0; i < 4; i++) 
+		{
+			EnterCriticalSection(&m_wroomLock);
+			delete m_users[i];
+			m_users[i] = nullptr;
+			LeaveCriticalSection(&m_wroomLock);
+		}
+
 	}
 	else if (honyPick->GetClicked())
 	{
 		Pick myPick = Pick::HORN_MURSHROOM;
-		Network::GetInstance()->SendPacket((char*)&myPick, PROCESS_PICK_CHANGE_REQUEST,  sizeof(int), 0);
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = PKT_S_PICKCHANGE;
+		header->size = 8;
+		*(int*)(header + 1) = static_cast<int>(myPick);
+		Network::GetInstance()->Send(buffer, header->size);
 	}
 	else if (orangePick->GetClicked())
 	{
 		Pick myPick = Pick::ORANGE_MURSHROOM;
-		Network::GetInstance()->SendPacket((char*)&myPick, PROCESS_PICK_CHANGE_REQUEST,  sizeof(int), 0);
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = PKT_S_PICKCHANGE;
+		header->size = 8;
+		*(int*)(header + 1) = static_cast<int>(myPick);
+		Network::GetInstance()->Send(buffer, header->size);
 	}
 	else if (pigPick->GetClicked())
 	{
 		Pick myPick = Pick::PIG;
-		Network::GetInstance()->SendPacket((char*)&myPick, PROCESS_PICK_CHANGE_REQUEST,  sizeof(int), 0);
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = PKT_S_PICKCHANGE;
+		header->size = 8;
+		*(int*)(header + 1) = static_cast<int>(myPick);
+		Network::GetInstance()->Send(buffer, header->size);
 	}
 	else if (gameStart->GetClicked())
 	{
-		Network::GetInstance()->SendPacket(nullptr, PROCESS_GAME_START_REQUEST, 0, 0);
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = PKT_S_READY;
+		header->size = 4;
+		Network::GetInstance()->Send(buffer,header->size);
 	}
 }
 
@@ -110,16 +158,50 @@ void WRoomView::Render()
 
 	for (int zindex = 0; zindex < WROOM_UICOUNT; zindex++)
 		if (m_uiVector[zindex])
+		{
+			if (zindex != WROOM_USERNAME1_STATICTEXT 
+				&& zindex != WROOM_USERNAME2_STATICTEXT 
+				&& zindex != WROOM_USERNAME3_STATICTEXT 
+				&& zindex != WROOM_USERNAME4_STATICTEXT 
+				&& zindex != WROOM_USER1_PICKVIEW 
+				&& zindex != WROOM_USER2_PICKVIEW
+				&& zindex != WROOM_USER3_PICKVIEW
+				&& zindex != WROOM_USER4_PICKVIEW
+				&& zindex != WROOM_READY_P2
+				&& zindex != WROOM_READY_P3
+				&& zindex != WROOM_READY_P4
+				)
 			m_uiVector[zindex]->Render();
+		}
+
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			EnterCriticalSection(&m_wroomLock);
+			if (m_users[i])
+			{
+				if (i != 0)
+					static_cast<Ready*>(m_uiVector[i + 15])->Render();
+				static_cast<StaticText*>(m_uiVector[WROOM_USERNAME1_STATICTEXT + i])->Render();
+				static_cast<UserPickView*>(m_uiVector[i + 12])->Render();
+			}
+			LeaveCriticalSection(&m_wroomLock);
+		}
+	}
+
+
 }
 
 void WRoomView::Clean()
 {
-	//for (int zindex = 0; zindex < WROOM_UICOUNT; zindex++)
-	//	if (m_uiVector[zindex])
-	//		delete m_uiVector[zindex];
-	//DeleteCriticalSection(&m_wroomLock);
 	static_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->ClearChat();
+	EnterCriticalSection(&m_wroomLock);
+	for (int i = 0; i < 4; i++) 
+	{
+		if (m_users[i])
+			m_users[i]->SetReady(false);
+	}
+	LeaveCriticalSection(&m_wroomLock);
 }
 
 void WRoomView::MouseMoveEvent(int _x, int _y)
@@ -150,8 +232,19 @@ void WRoomView::CharEvent(WPARAM _key)
 		{
 			if (zindex == WROOM_CHATINPUT && _key == 13 /* ENTER */)
 			{
+				char buffer[256];
+				
 				WCHAR* text = static_cast<InputEditor*>(m_uiVector[zindex])->GetText();
-				Network::GetInstance()->SendPacket((char*)text, PROCESS_WROOM_CHAT_REQUEST, wcslen(text) * sizeof(WCHAR), 1);
+				int textSize = wcslen(text) * sizeof(WCHAR);
+			
+				PacketHeader* head = reinterpret_cast<PacketHeader*>(buffer);
+				*(int*)(head + 1) = textSize;
+				::memcpy(((int*)(head + 1) + 1), text, textSize);
+
+				head->size = 4 + 4 + textSize;
+				head->id = PKT_S_WROOMCHAT;
+
+				Network::GetInstance()->Send(buffer,head->size);
 				static_cast<InputEditor*>(m_uiVector[zindex])->TextInit();
 			}
 			else
@@ -175,48 +268,171 @@ ViewType WRoomView::ChangeView()
 	}
 }
 
-void WRoomView::WRoomUserListAsync(std::vector<User>& _data)
-{
-	EnterCriticalSection(&m_wroomLock);
-	static_cast<StaticText*>(m_uiVector[WROOM_USERNAME2_STATICTEXT])->SetText(nullptr);
-	static_cast<StaticText*>(m_uiVector[WROOM_USERNAME3_STATICTEXT])->SetText(nullptr);
-	static_cast<StaticText*>(m_uiVector[WROOM_USERNAME4_STATICTEXT])->SetText(nullptr);
-
-	for (int i = 0; i < 4; i++)
-	{
-		static_cast<StaticText*>(m_uiVector[WROOM_USERNAME1_STATICTEXT + i])->SetText(nullptr);
-
-		if (i != 0)
-		{
-			static_cast<Ready*>(m_uiVector[i + 15])->SetReady(false);
-		}
-	}
-
-	int user;
-	for (user = 0; user < _data.size(); user++)
-	{
-		static_cast<UserPickView*>(m_uiVector[user + 12])->Refresh(static_cast<Pick>(_data[user].GetPick()));
-		static_cast<StaticText*>(m_uiVector[user + 6])->SetText(_data[user].GetUsername(), wcslen(_data[user].GetUsername()) * 2);
-
-		if (user != 0)
-		{
-			static_cast<Ready*>(m_uiVector[user + 15])->SetReady(_data[user].GetReady());
-		}
-	}
-
-	for (; user < 4; user++)
-		static_cast<UserPickView*>(m_uiVector[user + 12])->Refresh(static_cast<Pick>(NOUSER));
-	LeaveCriticalSection(&m_wroomLock);
-}
-
-void WRoomView::WRoomTitleAsync(WCHAR* _dataPtr, int _dataSize)
-{
-	EnterCriticalSection(&m_wroomLock);
-	static_cast<StaticText*>(m_uiVector[WROOM_TITLE_STATICTEXT])->SetText(_dataPtr, _dataSize);
-	LeaveCriticalSection(&m_wroomLock);
-}
 
 void WRoomView::WRoomChatMsgRecv(WCHAR* _dataPtr, int _dataSize)
 {
 	static_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->Add((char*)_dataPtr, _dataSize);
+}
+
+void WRoomView::PlayerWRoomExit(User* _user)
+{
+	
+	for (int i = 0; i < 4; i++)
+	{
+		if (m_users[i] != nullptr && m_users[i]->GetUserId() == _user->GetUserId())
+		{
+			delete m_users[i];
+			m_users[i] = nullptr;
+
+			for (int j = i; j < 3; j++)
+			{
+				::std::swap(m_users[j], m_users[j + 1]);
+			}
+			break;
+		}
+	}
+}
+
+void WRoomView::PlayerWRoomEnter(User* _user)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if (m_users[i] == nullptr)
+		{
+			m_users[i] = new User(*_user);
+			break;
+		}
+	}
+}
+
+void WRoomView::PlayerWRoomEnter(char* buffer)
+{
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+
+	char* readBuffer = (char*)(header + 1);
+
+	int playerCount = *(int*)(readBuffer);			readBuffer += 4;
+	
+	for (int i = 0; i < playerCount; i++) 
+	{
+		int pick = *(int*)(readBuffer);			readBuffer += 4;
+		int order = *(int*)(readBuffer);			readBuffer += 4;
+		bool ready = *(bool*)(readBuffer);		readBuffer += sizeof(bool);
+		int usernameSize = *(int*)(readBuffer);		readBuffer += 4;
+		WCHAR* username = (WCHAR*)(readBuffer);		readBuffer += usernameSize;
+	
+		m_users[order] = new User();
+		m_users[order]->SetPick(static_cast<Pick>(pick));
+		m_users[order]->SetOrder(order);
+		m_users[order]->SetReady(ready);
+		m_users[order]->SetUsername(username, usernameSize);
+	}
+
+	int titleSize = *(int*)readBuffer; readBuffer += 4;
+	WCHAR* title = (WCHAR*)readBuffer; readBuffer += titleSize;
+	WRoomTitleAsync(title, titleSize);
+}
+
+void WRoomView::PlayerWRoomOtherEnter(char* buffer)
+{
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+	char* readBuffer = (char*)(header + 1);
+	int pick = *(int*)(readBuffer);			readBuffer += 4;
+	int order = *(int*)(readBuffer);			readBuffer += 4;
+	bool ready = *(bool*)(readBuffer);		readBuffer += sizeof(bool);
+	int usernameSize = *(int*)(readBuffer);		readBuffer += 4;
+	WCHAR* username = (WCHAR*)(readBuffer);		readBuffer += usernameSize;
+
+	m_users[order] = new User();
+	m_users[order]->SetPick(static_cast<Pick>(pick));
+	m_users[order]->SetOrder(order);
+	m_users[order]->SetReady(ready);
+	m_users[order]->SetUsername(username, usernameSize);
+}
+
+void WRoomView::PlayerReady(char* _buffer)
+{
+	int userId = *(int*)_buffer;
+	bool ready = *(bool*)(_buffer + 4);
+
+	for (int i = 0; i < 4; i++) 
+	{
+		if (m_users[i] != nullptr && m_users[i]->GetUserId() == userId)
+		{
+			m_users[i]->SetReady(ready);
+		}
+	}
+}
+
+void WRoomView::PlayerPickChange(char* _buffer)
+{
+	int userId = *(int*)_buffer;
+	Pick pick = *((Pick*)(_buffer + 4));
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (m_users[i] != nullptr && m_users[i]->GetUserId() == userId)
+		{
+			m_users[i]->SetPick(pick);
+		}
+	}
+}
+
+void WRoomView::WRoomTitleAsync(WCHAR* _dataPtr, int _dataSize)
+{
+	static_cast<StaticText*>(m_uiVector[WROOM_TITLE_STATICTEXT])->SetText(_dataPtr, _dataSize);
+}
+
+void WRoomView::WRoomChat(char* buffer)
+{
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+	int* strSize = (int*)(header + 1);
+	char* dataPtr = reinterpret_cast<char*>(strSize + 1);
+	static_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->Add(dataPtr, *strSize);
+}
+
+void WRoomView::WRoomAsync(char* buffer)
+{
+	for (int i = 0; i < 4; i++) 
+	{
+		if (m_users[i] != nullptr) 
+		{
+			delete m_users[i];
+			m_users[i] = nullptr;
+		}
+	}
+
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+	char* readBuffer = (char*)(header + 1);
+	int playerCount = *(int*)(readBuffer);			readBuffer += 4;
+
+	for (int i = 0; i < playerCount; i++)
+	{
+		int pick = *(int*)(readBuffer);			readBuffer += 4;
+		int order = *(int*)(readBuffer);			readBuffer += 4;
+		bool ready = *(bool*)(readBuffer);		readBuffer += sizeof(bool);
+		int usernameSize = *(int*)(readBuffer);		readBuffer += 4;
+		WCHAR* username = (WCHAR*)(readBuffer);		readBuffer += usernameSize;
+		m_users[order] = new User();
+		m_users[order]->SetPick(static_cast<Pick>(pick));
+		m_users[order]->SetOrder(order);
+		m_users[order]->SetReady(ready);
+		m_users[order]->SetUsername(username, usernameSize);
+	}
+}
+
+void WRoomView::WRoomPickChange(char* buffer)
+{
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+	int userIndex = *(int*)(header + 1);
+	Pick pick = static_cast<Pick>(*((int*)(header + 1) + 1));
+	m_users[userIndex]->SetPick(pick);
+}
+
+void WRoomView::WRoomReady(char* buffer)
+{
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+	int userIndex = *(int*)(header + 1);
+	bool ready = *(bool*)((int*)(header + 1) + 1);
+	m_users[userIndex]->SetReady(ready);
 }

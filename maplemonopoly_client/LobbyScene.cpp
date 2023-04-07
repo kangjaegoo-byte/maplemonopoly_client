@@ -11,6 +11,10 @@ LobbyScene::LobbyScene() : Scene(LOBBY_SCENE)
 LobbyScene::~LobbyScene()
 {
     Clean();
+
+	for (int i = 0; i < VIEW_COUNT; i++)
+		if (m_viewVector[i])
+			delete m_viewVector[i];
 }
 
 void LobbyScene::Init()
@@ -98,10 +102,10 @@ void LobbyScene::LobbyRoomListDataAsync(const std::vector<class Room>& _data)
 		static_cast<LobbyView*>(m_viewVector[LOBBY_VIEW])->LobbyRoomListDataAsync(_data);
 }
 
-void LobbyScene::LobbyChatMsgRecv(WCHAR* _text, int _size)
+void LobbyScene::LobbyChatMsgRecv(char* buffer)
 {
 	if (m_viewVector[LOBBY_VIEW])
-		static_cast<LobbyView*>(m_viewVector[LOBBY_VIEW])->LobbyChatMsgRecv(_text, _size);
+		static_cast<LobbyView*>(m_viewVector[LOBBY_VIEW])->LobbyChatMsgRecv(buffer);
 }
 
 void LobbyScene::LobbyUsernameAsync(WCHAR* _text, int _size)
@@ -110,20 +114,82 @@ void LobbyScene::LobbyUsernameAsync(WCHAR* _text, int _size)
 		static_cast<LobbyView*>(m_viewVector[LOBBY_VIEW])->LobbyUsernameAsync(_text, _size);
 }
 
-void LobbyScene::WRoomUserListAsync(std::vector<class User>& _data)
-{
-	if (m_viewVector[WROOM_VIEW])
-		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->WRoomUserListAsync(_data);
-}
-
-void LobbyScene::WRoomTitleAsync(WCHAR* _text, int _size)
-{
-	if (m_viewVector[WROOM_VIEW])
-		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->WRoomTitleAsync(_text, _size);
-}
-
 void LobbyScene::WRoomChat(WCHAR* _text, int _size)
 {
 	if (m_viewVector[WROOM_VIEW])
 		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->WRoomChatMsgRecv(_text, _size);
 }
+
+void LobbyScene::WRoomChat(char* buffer)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->WRoomChat(buffer);
+}
+
+void LobbyScene::PlayerWRoomEnter(User* _user)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->PlayerWRoomEnter(_user);
+}
+
+void LobbyScene::PlayerWRoomEnter(char* buffer)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->PlayerWRoomEnter(buffer);
+}
+
+
+void LobbyScene::PlayerWRoomExit(User* _user)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->PlayerWRoomExit(_user);
+}
+
+void LobbyScene::PlayerReady(char* buffer)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->PlayerReady(buffer);
+}
+
+void LobbyScene::PlayerPickChange(char* buffer)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->PlayerPickChange(buffer);
+
+}
+
+void LobbyScene::WRoomTitleAsync(WCHAR* _dataPtr, int _dataSize)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->WRoomTitleAsync(_dataPtr, _dataSize);
+}
+
+void LobbyScene::LobbyAsync(char* buffer)
+{
+	static_cast<LobbyView*>(m_viewVector[LOBBY_VIEW])->LobbyAsync(buffer);
+}
+
+void LobbyScene::PlayerWRoomOtherEnter(char* buffer)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->PlayerWRoomOtherEnter(buffer);
+}
+
+void LobbyScene::WRoomAsync(char* buffer)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->WRoomAsync(buffer);
+}
+
+void LobbyScene::WRoomPickChange(char* buffer)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->WRoomPickChange(buffer);
+}
+
+void LobbyScene::WRoomReady(char* buffer)
+{
+	if (m_viewVector[WROOM_VIEW])
+		static_cast<WRoomView*>(m_viewVector[WROOM_VIEW])->WRoomReady(buffer);
+}
+

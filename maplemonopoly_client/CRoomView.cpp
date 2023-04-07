@@ -13,6 +13,9 @@ CRoomView::CRoomView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, 
 CRoomView::~CRoomView()
 {
 	Clean();
+	for (int zindex = 0; zindex < CROOM_UICOUNT; zindex++)
+		if (m_uiVector[zindex])
+			delete m_uiVector[zindex];
 }
 
 void CRoomView::Init()
@@ -39,9 +42,7 @@ void CRoomView::Render()
 
 void CRoomView::Clean()
 {
-	//for (int zindex = 0; zindex < CROOM_UICOUNT; zindex++)
-	//	if (m_uiVector[zindex])
-	//		delete m_uiVector[zindex];
+
 }
 
 void CRoomView::MouseMoveEvent(int _x, int _y)
@@ -84,11 +85,21 @@ ViewType CRoomView::ChangeView()
 	if (noBtn->GetClicked())
 	{
 		title->TextInit();
+
 		return ViewType::LOBBY_VIEW;
 	}
 	else if (okBtn->GetClicked())
 	{
-		Network::GetInstance()->SendPacket((char*)title->GetText(), PROCESS_CREATE_ROOM_REQUEST, (wcslen(title->GetText()) * sizeof(WCHAR)), 0);
+		char buffer[256] = {};
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		*(int*)(header + 1) = wcslen(title->GetText()) * sizeof(WCHAR);
+		WCHAR* textPtr = (WCHAR*)((int*)(header + 1) + 1);
+		memcpy(textPtr, title->GetText(), wcslen(title->GetText()) * sizeof(WCHAR));
+
+		header->id = PKT_S_CREATEROOM;
+		header->size = 4 + 4 + wcslen(title->GetText()) * sizeof(WCHAR);
+
+		Network::GetInstance()->Send(buffer, header->size);
 		title->TextInit();
 		return ViewType::WROOM_VIEW;
 	}

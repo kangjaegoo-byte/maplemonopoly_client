@@ -48,7 +48,8 @@ public:
 	void			WRoomEnter(int _x, int _y);
 	void			LobbyUserListDataAsync(const std::vector<class User>& _data);
 	void			LobbyRoomListDataAsync(const std::vector<class Room>& _data);
-	void			LobbyChatMsgRecv(WCHAR* _text, int _size);
+	void			LobbyChatMsgRecv(char* buffer);
 	void			LobbyUsernameAsync(WCHAR* _text, int _size);
+	void			LobbyAsync(char* buffer);
 };
 

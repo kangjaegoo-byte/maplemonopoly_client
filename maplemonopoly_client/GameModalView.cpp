@@ -15,6 +15,7 @@ GameModalView::GameModalView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget
 GameModalView::~GameModalView()
 {
 	Clean();
+	DeleteCriticalSection(&m_gameLock);
 }
 
 void GameModalView::Init()
@@ -37,23 +38,21 @@ void GameModalView::Update(int _deltaTick)
 
 	if (okBtn->GetClicked())
 	{
-		// 서버에다가 전송
-		switch (m_type)
-		{
-		case PROCESS_GAME_BUYREGION_REQUEST:
-			Network::GetInstance()->SendPacket((char*)&m_playerIndex, PROCESS_GAME_BUYREGION_REQUEST, sizeof(int), 0);
-			break;
-
-		case PROCESS_GAME_BUYREGION_OTHER_REQUEST:
-			Network::GetInstance()->SendPacket((char*)&m_playerIndex, PROCESS_GAME_BUYREGION_OTHER_REQUEST, sizeof(int), 0);
-			break;
-		}
-
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = m_type;
+		header->size = 8;
+		*(int*)(header + 1) = m_playerIndex;
+		Network::GetInstance()->Send(buffer, header->size);
 		Clear();
 	}
 	else if (noBtn->GetClicked())
 	{
-		Network::GetInstance()->SendPacket(nullptr, PROCESS_GAME_NEXTTURN_REQUEST, 0, 0);
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->size = 4;
+		header->id = PKT_S_PASSTURN;
+		Network::GetInstance()->Send(buffer, header->size);
 		Clear();
 	}
 
@@ -73,10 +72,6 @@ void GameModalView::Render()
 
 void GameModalView::Clean()
 {
-	//DeleteCriticalSection(&m_gameLock);
-
-
-
 
 }
 
@@ -125,7 +120,7 @@ void GameModalView::GameBuyRegionModalOtherProcessResponseEx(Region* dataPtr, in
 	WCHAR buf[256] = L"";
 	swprintf_s(buf, L"해당지역을 구매 하시겠습니까?\n 구매비용은 %d억 입니다", dataPtr->_passCost);
 	m_text->SetText(buf, wcslen(buf) * 2);
-	m_type = PROCESS_GAME_BUYREGION_OTHER_REQUEST;
+	m_type = PKT_S_BUYOTHERREGION;
 	LeaveCriticalSection(&m_gameLock);
 }
 
@@ -139,7 +134,7 @@ void GameModalView::GameBuyRegion(Region* dataPtr)
 	WCHAR buf[256] = L"";
 	swprintf_s(buf, L"해당지역을 구매/업그레이드 하시겠습니까?\n 구매비용은 %d억 입니다", dataPtr->_passCost);
 	m_text->SetText(buf, wcslen(buf) * 2);
-	m_type = PROCESS_GAME_BUYREGION_REQUEST;
+	m_type = PKT_S_BUYREGION;
 	LeaveCriticalSection(&m_gameLock);
 }
 
