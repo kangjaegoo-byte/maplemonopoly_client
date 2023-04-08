@@ -43,6 +43,7 @@ private:
 	CRITICAL_SECTION				m_wroomLock;
 	bool m_lobbyRoomChange = false;
 	class User* m_users[4] = { nullptr, nullptr, nullptr, nullptr };
+	std::vector<class Button*> buttons;
 
 public:
 	WRoomView(ID2D1HwndRenderTarget* _rt, ID2D1BitmapRenderTarget* _crt, IDWriteTextFormat* _textFormat, IDWriteTextFormat* _staticTextFormat, ID2D1SolidColorBrush* _brush);
@@ -73,5 +74,7 @@ public:
 	void			WRoomAsync(char* buffer);
 	void			WRoomPickChange(char* buffer);
 	void			WRoomReady(char* buffer);
+
+	void            ButtonEventHandelr(ButtonCommand command);
 };
 

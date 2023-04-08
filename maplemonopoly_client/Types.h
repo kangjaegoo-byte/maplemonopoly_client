@@ -261,3 +261,13 @@ struct PacketHeader
 	unsigned __int16 size;
 	unsigned __int16 id; // 프로토콜ID (ex. 1=로그인, 2=이동요청)
 };
+
+enum ButtonCommand 
+{
+	EVENTNONE = -1,
+	EXIT = 0,
+	HONYPICKCHANGE = 1,
+	ORANGEPICKCHANGE = 2,
+	PIGPICKCHANGE = 3,
+	READY = 4,
+};

@@ -3,8 +3,15 @@ class GameService
 {
 private:
 	static GameService* m_instance;
+
+	GameService() {};
+	~GameService() {};
+
+	
 public:
 	static GameService* GetInstance();
+	static void DeleteInstance() { if(m_instance) delete m_instance; }
+
 	void   Init();
 	void   Clean();
 	void   SceneChange();

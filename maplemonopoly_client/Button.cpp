@@ -6,6 +6,10 @@ Button::Button(int _x, int _y, int _width, int _height, bool _focused) : UICompo
 
 }
 
+Button::Button(int _x, int _y, int _width, int _height, bool _focused, ButtonCommand command) : UIComponent(_x, _y, _width, _height, _focused), m_command(command)
+{
+}
+
 Button::~Button()
 {
 }
@@ -53,5 +57,18 @@ bool Button::GetClicked()
 	else
 	{
 		return false;
+	}
+}
+
+ButtonCommand Button::GetClickedCommand()
+{
+	if (m_clicked == true)
+	{
+		m_clicked = false;
+		return m_command;
+	}
+	else
+	{
+		return EVENTNONE;
 	}
 }

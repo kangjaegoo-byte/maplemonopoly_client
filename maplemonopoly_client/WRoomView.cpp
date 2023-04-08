@@ -29,7 +29,7 @@ void WRoomView::Init()
 	InitializeCriticalSection(&m_wroomLock);
 	m_uiVector.resize(WROOM_UICOUNT, nullptr);	
 
-	m_uiVector[WROOM_EXIT_BTN] = new Button(749, 572, 26, 19, false);
+	m_uiVector[WROOM_EXIT_BTN] = new Button(749, 572, 26, 19, false, EXIT);
 	m_uiVector[WROOM_TITLE_STATICTEXT] = new StaticText(27, 61, 274, 20, false, m_blackBrush, m_staticTextFormat);
 	m_uiVector[WROOM_USERNAME1_STATICTEXT] = new StaticText(31, 214, 79, 14, false, m_blackBrush, m_staticTextFormat);
 	m_uiVector[WROOM_USERNAME2_STATICTEXT] = new StaticText(134, 214, 79, 14, false, m_blackBrush, m_staticTextFormat);
@@ -37,10 +37,11 @@ void WRoomView::Init()
 	m_uiVector[WROOM_USERNAME4_STATICTEXT] = new StaticText(350, 214, 79, 14, false, m_blackBrush, m_staticTextFormat);
 	m_uiVector[WROOM_CHATINPUT] = new InputEditor(184, 523, 300, 20, 10, false, m_blackBrush, m_textFormat);
 	m_uiVector[WROOM_CHATTING_LIST] = new ChattingBox(16, 50, 374, 448, false, m_blackBrush, m_textFormat, 15);
-	m_uiVector[WROOM_USERPICK1_BTN] = new Button(488, 83, 61, 40, false);
-	m_uiVector[WROOM_USERPICK2_BTN] = new Button(560, 83, 61, 40, false);
-	m_uiVector[WROOM_USERPICK3_BTN] = new Button(633, 83, 61, 40, false);
-	m_uiVector[WROOM_GAMESTART_BTN] = new Button(512, 495, 185, 47, false);
+
+	m_uiVector[WROOM_USERPICK1_BTN] = new Button(488, 83, 61, 40, false, HONYPICKCHANGE);
+	m_uiVector[WROOM_USERPICK2_BTN] = new Button(560, 83, 61, 40, false, ORANGEPICKCHANGE);
+	m_uiVector[WROOM_USERPICK3_BTN] = new Button(633, 83, 61, 40, false, PIGPICKCHANGE);
+	m_uiVector[WROOM_GAMESTART_BTN] = new Button(512, 495, 185, 47, false, READY);
 
 	const int padding1 = 10;
 	const int padding2 = 20;
@@ -52,6 +53,19 @@ void WRoomView::Init()
 	m_uiVector[WROOM_READY_P2] = new Ready(134,235,95,15,false);
 	m_uiVector[WROOM_READY_P3] = new Ready(239,235,95,15,false);
 	m_uiVector[WROOM_READY_P4] = new Ready(345,235,95,15,false);
+
+	Button* exitBtn = static_cast<Button*> (m_uiVector[WROOM_EXIT_BTN]);
+	Button* honyPick = static_cast<Button*> (m_uiVector[WROOM_USERPICK1_BTN]);
+	Button* orangePick = static_cast<Button*> (m_uiVector[WROOM_USERPICK2_BTN]);
+	Button* pigPick = static_cast<Button*> (m_uiVector[WROOM_USERPICK3_BTN]);
+	Button* gameStart = static_cast<Button*> (m_uiVector[WROOM_GAMESTART_BTN]);
+
+	buttons.push_back(exitBtn);
+	buttons.push_back(honyPick);
+	buttons.push_back(orangePick);
+	buttons.push_back(pigPick);
+	buttons.push_back(gameStart);
+
 }
 
 void WRoomView::Update(int _deltaTick)
@@ -84,72 +98,11 @@ void WRoomView::Update(int _deltaTick)
 		}
 	}
 
-
-	Button* exitBtn = static_cast<Button*> (m_uiVector[WROOM_EXIT_BTN]);
-	Button* honyPick = static_cast<Button*> (m_uiVector[WROOM_USERPICK1_BTN]);
-	Button* orangePick = static_cast<Button*> (m_uiVector[WROOM_USERPICK2_BTN]);
-	Button* pigPick = static_cast<Button*> (m_uiVector[WROOM_USERPICK3_BTN]);
-	Button* gameStart = static_cast<Button*> (m_uiVector[WROOM_GAMESTART_BTN]);
-
-	if (exitBtn->GetClicked())
+	for (auto& button : buttons)
 	{
-		char buffer[256];
+		ButtonEventHandelr(button->GetClickedCommand());
+	}
 
-		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-		header->id = PKT_S_EXITWROOM;
-		header->size = 4;
-		Network::GetInstance()->Send(buffer, header->size);
-		
-		m_lobbyRoomChange = true;
-		static_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->ClearChat();
-
-		for (int i = 0; i < 4; i++) 
-		{
-			EnterCriticalSection(&m_wroomLock);
-			delete m_users[i];
-			m_users[i] = nullptr;
-			LeaveCriticalSection(&m_wroomLock);
-		}
-
-	}
-	else if (honyPick->GetClicked())
-	{
-		Pick myPick = Pick::HORN_MURSHROOM;
-		char buffer[256];
-		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-		header->id = PKT_S_PICKCHANGE;
-		header->size = 8;
-		*(int*)(header + 1) = static_cast<int>(myPick);
-		Network::GetInstance()->Send(buffer, header->size);
-	}
-	else if (orangePick->GetClicked())
-	{
-		Pick myPick = Pick::ORANGE_MURSHROOM;
-		char buffer[256];
-		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-		header->id = PKT_S_PICKCHANGE;
-		header->size = 8;
-		*(int*)(header + 1) = static_cast<int>(myPick);
-		Network::GetInstance()->Send(buffer, header->size);
-	}
-	else if (pigPick->GetClicked())
-	{
-		Pick myPick = Pick::PIG;
-		char buffer[256];
-		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-		header->id = PKT_S_PICKCHANGE;
-		header->size = 8;
-		*(int*)(header + 1) = static_cast<int>(myPick);
-		Network::GetInstance()->Send(buffer, header->size);
-	}
-	else if (gameStart->GetClicked())
-	{
-		char buffer[256];
-		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-		header->id = PKT_S_READY;
-		header->size = 4;
-		Network::GetInstance()->Send(buffer,header->size);
-	}
 }
 
 void WRoomView::Render()
@@ -435,4 +388,79 @@ void WRoomView::WRoomReady(char* buffer)
 	int userIndex = *(int*)(header + 1);
 	bool ready = *(bool*)((int*)(header + 1) + 1);
 	m_users[userIndex]->SetReady(ready);
+}
+
+void WRoomView::ButtonEventHandelr(ButtonCommand command)
+{
+	switch (command)
+	{
+	case EXIT:
+	{
+		char buffer[256];
+
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = PKT_S_EXITWROOM;
+		header->size = 4;
+		Network::GetInstance()->Send(buffer, header->size);
+
+		m_lobbyRoomChange = true;
+		static_cast<ChattingBox*>(m_uiVector[WROOM_CHATTING_LIST])->ClearChat();
+
+		for (int i = 0; i < 4; i++)
+		{
+			EnterCriticalSection(&m_wroomLock);
+			delete m_users[i];
+			m_users[i] = nullptr;
+			LeaveCriticalSection(&m_wroomLock);
+		}
+	
+	}
+		break;
+
+	case HONYPICKCHANGE:
+	{
+		Pick myPick = Pick::HORN_MURSHROOM;
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = PKT_S_PICKCHANGE;
+		header->size = 8;
+		*(int*)(header + 1) = static_cast<int>(myPick);
+		Network::GetInstance()->Send(buffer, header->size);
+	}
+		break;
+
+	case ORANGEPICKCHANGE:
+	{
+		Pick myPick = Pick::ORANGE_MURSHROOM;
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = PKT_S_PICKCHANGE;
+		header->size = 8;
+		*(int*)(header + 1) = static_cast<int>(myPick);
+		Network::GetInstance()->Send(buffer, header->size);
+	}
+		break;
+
+	case PIGPICKCHANGE:
+	{
+		Pick myPick = Pick::PIG;
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = PKT_S_PICKCHANGE;
+		header->size = 8;
+		*(int*)(header + 1) = static_cast<int>(myPick);
+		Network::GetInstance()->Send(buffer, header->size);
+	}
+		break;
+
+	case READY:
+	{
+		char buffer[256];
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		header->id = PKT_S_READY;
+		header->size = 4;
+		Network::GetInstance()->Send(buffer, header->size);
+	}
+		break;
+	}
 }
